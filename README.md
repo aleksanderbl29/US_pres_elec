@@ -14,13 +14,13 @@ US Presidential Election - Voter Behaviour and Simulation Models*.
 It contains:
 
 ``` r
-list.files("./qss")
-#> [1] "Chapter 1_files" "Chapter 1.html"  "Chapter 1.qmd"
+list.files("./qss", pattern = "*.qmd")
+#> [1] "Chapter 1.qmd"
 ```
 
 and
 
 ``` r
-list.files("./classes")
-#> [1] "class-1_files"    "class-1.html"     "class-1.qmd"      "tinytable_assets"
+list.files("./classes", pattern = "*.qmd")
+#> [1] "class-1.qmd"
 ```

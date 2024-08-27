@@ -22,11 +22,11 @@ This repo is meant to organise all my files for the course *232E24 - The US Pres
 It contains:
 
 ```{r}
-list.files("./qss")
+list.files("./qss", pattern = "*.qmd")
 ```
 
 and
 
 ```{r}
-list.files("./classes")
+list.files("./classes", pattern = "*.qmd")
 ```
