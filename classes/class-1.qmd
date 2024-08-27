@@ -48,8 +48,8 @@ head(turnout)
 Calculate the turnout rate based on the voting age population or VAP. Note that for this data set, we must add the total number of eligible overseas voters since the VAP variable does not include these individuals in the count. Next, calculate the turnout rate using the voting eligible population or VEP. What difference do you observe?
 
 ```{r, fig.align='center'}
-turnout <- turnout %>% 
-  select(everything()) %>% 
+turnout <- turnout %>%
+  select(everything()) %>%
   mutate(vap_os = VAP + na.omit(overseas),
          turnout_rate_vap = (total / vap_os) * 100,
          turnout_rate_vep = (total / VEP) * 100,
@@ -57,28 +57,32 @@ turnout <- turnout %>%
          election_type = if_else(year / 4 == round(year / 4),
                                  "presidential", "midterm"),
          year = as_factor(year))
-turnout %>% 
-  select(starts_with("turnout_rate")) %>% 
-  mutate('VAP %' = turnout_rate_vap,
-         'VEP %' = turnout_rate_vep,
-         DIFF = turnout_rate_diff) %>% 
-  select(-starts_with("turnout_rate")) %>% 
+turnout %>%
+  select(starts_with("turnout_rate")) %>%
+  mutate("VAP %" = turnout_rate_vap,
+         "VEP %" = turnout_rate_vep,
+         DIFF = turnout_rate_diff) %>%
+  select(-starts_with("turnout_rate")) %>%
   datasummary_skim(fmt = 3,
                    fun_numeric = list(
-                     'n(years)' = NUnique,
+                     "n(years)" = NUnique,
                      Mean = Mean,
                      SD = SD,
                      Min = Min,
-                     # Median = Median,
                      Max = Max,
-                     Histogram = function(x) ""))
+                     Histogram = function(x) ""
+                   ))
 
-turnout %>% 
+turnout %>%
   ggplot() +
-  geom_point(aes(x = year, y = turnout_rate_vap, shape = election_type, color = election_type)) +
-  geom_line(aes(x = year, y = turnout_rate_vap, group = 1), color = "lightblue") +
-  geom_point(aes(x = year, y = turnout_rate_vep, shape = election_type, color = election_type)) +
-  geom_line(aes(x = year, y = turnout_rate_vep, group = 1), color = "lightgreen") +
+  geom_point(aes(x = year, y = turnout_rate_vap,
+                 shape = election_type, color = election_type)) +
+  geom_line(aes(x = year, y = turnout_rate_vap, group = 1),
+            color = "lightblue") +
+  geom_point(aes(x = year, y = turnout_rate_vep,
+                 shape = election_type, color = election_type)) +
+  geom_line(aes(x = year, y = turnout_rate_vep, group = 1),
+            color = "lightgreen") +
   theme_minimal()
 ```
 
@@ -89,24 +93,24 @@ The Voting Eligible Population (green) generally has a higher turnout rate than 
 Compute the difference between VAP and ANES estimates of turnout rate. How big is the difference on average? What is the range of the difference? Conduct the same comparison for the VEP and ANES estimates of voter turnout. Briefly comment on the results.
 
 ```{r}
-turnout <- turnout %>% 
-  select(everything()) %>% 
+turnout <- turnout %>%
+  select(everything()) %>%
   mutate(vap_anes = ANES - turnout_rate_vap,
          vep_anes = ANES - turnout_rate_vep)
-turnout %>% 
-  select(ends_with("_anes")) %>% 
-  mutate('ANES - VAP' = vap_anes,
-         'ANES - VEP' = vep_anes) %>% 
-  select(!ends_with("_anes")) %>% 
+turnout %>%
+  select(ends_with("_anes")) %>%
+  mutate("ANES - VAP" = vap_anes,
+         "ANES - VEP" = vep_anes) %>%
+  select(!ends_with("_anes")) %>%
   datasummary_skim(fmt = 3,
                    fun_numeric = list(
-                     'n(years)' = NUnique,
+                     "n(years)" = NUnique,
                      Mean = Mean,
                      SD = SD,
                      Min = Min,
-                     # Median = Median,
                      Max = Max,
-                     Histogram = function(x) ""))
+                     Histogram = function(x) ""
+                   ))
 ```
 
 ANES is on average `r round(mean(turnout$vap_anes), 1)` points off of the actual VAP turnout. This is not very convincing. In the same manner, ANES is on average `r round(mean(turnout$vep_anes), 1)` points off of the actual VEP turnout.
@@ -118,15 +122,17 @@ Compare the VEP turnout rate with the ANES turnout rate separately for president
 - I have already decided which the types of elections in *Question 2*.
 
 ```{r}
-turnout %>% 
-  select(turnout_rate_vep, ANES, vep_anes, election_type) %>% 
+turnout %>%
+  select(turnout_rate_vep, ANES, vep_anes, election_type) %>%
   gtsummary::tbl_summary(by = "election_type",
                          label = list(
                            turnout_rate_vep = "Voting Eligible Population",
                            ANES = "ANES estimate",
                            vep_anes = "Differences between estimates"
                          ),
-                         statistic = list(all_continuous() ~ "{mean} ({min} - {max})"))
+                         statistic = list(
+                           all_continuous() ~ "{mean} ({min} - {max})"
+                         ))
 
 pct_pres <- turnout %>% 
   select(turnout_rate_vep, ANES, election_type) %>% 
@@ -154,7 +160,7 @@ pct <- sapply(list(pct_pres, pct_midterm, pct_diff), round, 3)
 Divide the data into half by election years such that you subset the data into two periods. Calculate the difference between the VEP turnout rate and the ANES turnout rate separately for each period. Has the bias of the ANES increased over time?
 
 ```{r}
-until_1992 <- turnout[1:7,]
+until_1992 <- turnout[1:7, ]
 
 pct_pres_until <- until_1992 %>% 
   select(turnout_rate_vep, ANES, election_type) %>% 
@@ -172,11 +178,15 @@ pct_midterm_until <- until_1992 %>%
 
 pct_diff_until <- pct_midterm_until - pct_pres_until
 
-pct_until <- sapply(list(pct_pres_until, pct_midterm_until, pct_diff_until), round, 3)
+pct_until <- sapply(list(
+  pct_pres_until,
+  pct_midterm_until,
+  pct_diff_until
+), round, 3)
 ```
 
 ```{r}
-after_1992 <- turnout[-(1:7),]
+after_1992 <- turnout[-(1:7), ]
 
 pct_pres_after <- after_1992 %>% 
   select(turnout_rate_vep, ANES, election_type) %>% 
@@ -194,7 +204,11 @@ pct_midterm_after <- after_1992 %>%
 
 pct_diff_after <- pct_midterm_after - pct_pres_after
 
-pct_after <- sapply(list(pct_pres_after, pct_midterm_after, pct_diff_after), round, 3)
+pct_after <- sapply(list(
+  pct_pres_after,
+  pct_midterm_after,
+  pct_diff_after
+), round, 3)
 ```
 
 Then we can compare the before and after
