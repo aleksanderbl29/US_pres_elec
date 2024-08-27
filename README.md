@@ -5,7 +5,7 @@
 
 <!-- badges: start -->
 
-[![lint-project.yaml](https://github.com/aleksanderbl29/US_pre_elec/actions/workflows/lint-project.yaml/badge.svg)](https://github.com/aleksanderbl29/pol_geo_ds/actions/workflows/lint-project.yaml)
+[![lint-project.yaml](https://github.com/aleksanderbl29/US_pres_elec/actions/workflows/lint-project.yaml/badge.svg)](https://github.com/aleksanderbl29/US_pres_elec/actions/workflows/lint-project.yaml)
 <!-- badges: end -->
 
 This repo is meant to organise all my files for the course *232E24 - The
