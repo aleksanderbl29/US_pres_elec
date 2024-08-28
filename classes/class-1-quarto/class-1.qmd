@@ -25,9 +25,9 @@ Load the data into R and check the dimensions of the data. Also, obtain a summar
 
 ```{r}
 if (interactive()) {
-  turnout_file <- "../1 - Introduction - Forecast Modeling/turnout.csv"
-} else {
   turnout_file <- "../../1 - Introduction - Forecast Modeling/turnout.csv"
+} else {
+  turnout_file <- "../../../1 - Introduction - Forecast Modeling/turnout.csv"
 }
 
 turnout <- read.csv(turnout_file)
