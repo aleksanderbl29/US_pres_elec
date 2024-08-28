@@ -86,7 +86,7 @@ turnout %>%
   theme_minimal()
 ```
 
-The Voting Eligible Population (green) generally has a higher turnout rate than the Voting Age Population. It is on average `r round(mean(turnout$turnout_rate_diff), 3)`. There is also generally higher turnout for the presidential elections than there are for the midterms.
+The Voting Eligible Population (green) generally has a higher turnout rate than the Voting Age Population. It is on average `r round(mean(turnout$turnout_rate_diff), 3)` points higher. There is also generally higher turnout for the presidential elections than there are for the midterms.
 
 ### Question 3
 
