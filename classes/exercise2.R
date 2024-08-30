@@ -142,9 +142,10 @@ pred_diffs %>%
              fill = ifelse(pred_diffs$`Victory Margin` > 0, "blue", "red"),
              size = 3) +
   geom_abline(slope = linear$coefficients[2]) +
-  xlim(-max(abs(pred_diffs[3])), max(abs(pred_diffs[3]))) +
+  # xlim(-max(abs(pred_diffs[3])), max(abs(pred_diffs[3]))) +
   ylim(min(pred_diffs[2:3]), max(abs(pred_diffs[2]))) +
-  scale_shape_manual(values = c(8, 21)) +
+  xlim(min(pred_diffs[2:3]), min(pred_diffs[2:3]) * -1) +
+  scale_shape_manual(values = c(8, 1)) +
   theme_minimal() +
   theme(legend.position = "none")
 
@@ -189,7 +190,7 @@ price_update_calc <- function(col) {
 
 ### Plotting the trend for West Virginia
 wv_price_trend <- df %>%
-  filter(days_to_election <= 20,
+  filter(days_to_election >= 0 & days_to_election <= 20,
          statename == "West Virginia") %>%
   mutate(price_updates = price_update_calc(bet_margin)) %>%
   ggplot(aes(x = days_to_election, y = bet_margin)) +
@@ -208,7 +209,7 @@ wv_price_trend
 
 ### Plotting the trend for Massachusetts
 ma_price_trend <- df %>%
-  filter(days_to_election <= 20,
+  filter(days_to_election >= 0 & days_to_election <= 20,
          statename == "Massachusetts") %>%
   mutate(price_updates = price_update_calc(bet_margin)) %>%
   ggplot(aes(x = days_to_election, y = bet_margin)) +
@@ -234,13 +235,65 @@ wv_price_trend + ma_price_trend +
   plot_layout(axis_titles = "collect")
 
 
+# Question 4 --------------------------------------------------------------
+# Evaluate the prediction by looking at election outcome (electoral college votes)
+# as opposed to simply vote share.
+
+## As previously graphed we have shown that only two (the stars) states have the
+## *wrong* election winner even though the voter shares are very off.
+pred_diffs %>%
+  ggplot(aes(x = `Betting Prediction`,
+             y = `Victory Margin`)) +
+  geom_hline(yintercept = 0, color = "grey40", linewidth = 0.1) +
+  geom_vline(xintercept = 0, color = "grey40", linewidth = 0.1) +
+  geom_point(aes(shape = `Correct prediction`),
+             color = ifelse(pred_diffs$`Victory Margin` > 0, "blue", "red"),
+             fill = ifelse(pred_diffs$`Victory Margin` > 0, "blue", "red"),
+             size = 3) +
+  geom_abline(slope = linear$coefficients[2]) +
+  # xlim(-max(abs(pred_diffs[3])), max(abs(pred_diffs[3]))) +
+  ylim(min(pred_diffs[2:3]), max(abs(pred_diffs[2]))) +
+  xlim(min(pred_diffs[2:3]), min(pred_diffs[2:3]) * -1) +
+  scale_shape_manual(values = c(8, 1)) +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+## These two states were wrong
+pred_diffs %>%
+  filter(!`Correct prediction`) %>%
+  tt() %>%
+  style_tt(j = 2:4, align = "r")
+
+## How is the votes from the electoral college distributed?
+### First we will extract the amount of votes from each state
+votes_df <- df %>%
+  filter(days_to_election == 0) %>%
+  select(statename, votes)
+
+### Join votes into predictions
+voting_predictions <- pred_diffs %>%
+  inner_join(votes_df, by = c("State" = "statename")) %>%
+  select(State, `Betting Prediction`, votes)
+
+### Present votes in a `{tinytable}`
+voting_predictions %>%
+  select(State, `Betting Prediction`, votes) %>%
+  mutate(Party = if_else(
+    `Betting Prediction` > 0,
+    "Democrats",
+    "Republicans"
+  )) %>%
+  select(State, votes, Party) %>%
+  group_by(Party) %>%
+  summarise(Votes = sum(votes)) %>%
+  tt() # %>%
+  # print("markdown")    # Use this to print a nice table in the console
+
+## If the betting markets were to trust, then the dems would have won 364
+## votes from the electoral college - This calc may be wrong.
 
 
-
-
-
-
-
+# Question 5 --------------------------------------------------------------
 
 
 
