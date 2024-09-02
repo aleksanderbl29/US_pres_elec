@@ -17,4 +17,6 @@ years <- read_html(page) %>%
 
 rvest_data <- tibble(num, years)
 
-write_csv(rvest_data, "classes/data-w-2.csv")
+head(rvest_data)
+
+# write_csv(rvest_data, "classes/data-w-2.csv")
