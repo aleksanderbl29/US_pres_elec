@@ -7,12 +7,14 @@ tags_yr <- "td:nth-child(1)"
 
 num <- read_html(page) %>%
   html_nodes(tags_num) %>%
-  html_text()
+  html_text() %>%
+  as.double()
 
 years <- read_html(page) %>%
   html_nodes(tags_yr) %>%
-  html_text()
+  html_text() %>%
+  as.double()
 
-data <- tibble(num, years)
+rvest_data <- tibble(num, years)
 
-write_csv(data, "classes/data-w-2.csv")
+write_csv(rvest_data, "classes/data-w-2.csv")
