@@ -249,15 +249,3 @@ rates %>% tt()
 
 It seems that the adjusted VAP turnout rate is a `r rates$adj_turnout_rate_vap - rates$turnout_rate_vap` percentage points higher when not including the overseas votes.
 
-
-
-
-
-
-
-
-
-
-
-
-
