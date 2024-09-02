@@ -76,6 +76,7 @@ one_day_out <- df %>%
 ### Perform linear model
 linear <- lm(vict_margin ~ bet_margin, one_day_out)
 summary(linear)
+summary(linear)$r.squared
 
 ### Predict election outcomes based on linear model
 predictions <- predict(linear, se.fit = FALSE)
