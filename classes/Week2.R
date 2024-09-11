@@ -19,4 +19,11 @@ rvest_data <- tibble(num, years)
 
 head(rvest_data)
 
+first_read <- read.csv("classes/data-w-2.csv")
+
+testthat::expect_equal(mean(rvest_data$num), mean(first_read$num))
+testthat::expect_equal(min(rvest_data$num), min(first_read$num))
+testthat::expect_equal(max(rvest_data$num), max(first_read$num))
+testthat::expect_equivalent(rvest_data, first_read)
+
 # write_csv(rvest_data, "classes/data-w-2.csv")
