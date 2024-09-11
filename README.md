@@ -15,12 +15,12 @@ It contains:
 
 ``` r
 list.files("./qss", pattern = "*.qmd")
-#> [1] "Chapter 1.qmd"
+#> character(0)
 ```
 
 and
 
 ``` r
 list.files("./classes", pattern = "*.qmd")
-#> [1] "class-1.qmd"
+#> character(0)
 ```
