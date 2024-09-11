@@ -16,6 +16,8 @@ It contains:
 ``` r
 list.files("./qss", pattern = "*.qmd")
 #> character(0)
+list.files("./qss", pattern = "*.R")
+#> character(0)
 ```
 
 and
@@ -23,4 +25,8 @@ and
 ``` r
 list.files("./classes", pattern = "*.qmd")
 #> character(0)
+list.files("./classes", pattern = "*.R")
+#> [1] "__NH__-answers-exercise2.R" "exercise2.R"               
+#> [3] "exercise3-shared.R"         "exercise3.R"               
+#> [5] "exercise4.R"                "Week2.R"
 ```

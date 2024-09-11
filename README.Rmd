@@ -23,10 +23,12 @@ It contains:
 
 ```{r}
 list.files("./qss", pattern = "*.qmd")
+list.files("./qss", pattern = "*.R")
 ```
 
 and
 
 ```{r}
 list.files("./classes", pattern = "*.qmd")
+list.files("./classes", pattern = "*.R")
 ```
