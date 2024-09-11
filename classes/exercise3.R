@@ -80,8 +80,8 @@ modelsummary(list(
   fundamentals_full), stars = TRUE)
 
 ## Running the model for each predictor separately and with all data until 2020
-fundamentals_full <- lm(incvote ~ q2gdp + juneapp + term2, data = abr_data)
-summary(fundamentals_full)
+fundamentals_all <- lm(incvote ~ q2gdp + juneapp + term2, data = abr_data)
+summary(fundamentals_all)
 
 fundamentals_gdp <- lm(incvote ~ q2gdp, data = abr_data)
 summary(fundamentals_gdp)
@@ -103,6 +103,20 @@ modelsummary(list(
 abr_data %>%
   ggplot(aes(x = q2gdp, y = incvote)) +
   geom_point(color = "darkgreen") +
+  geom_smooth(method = "lm") +
+  theme_bw() +
+  stat_poly_eq()
+
+abr_data %>%
+  ggplot(aes(x = juneapp, y = incvote)) +
+  geom_point(color = "lightblue") +
+  geom_smooth(method = "lm") +
+  theme_bw() +
+  stat_poly_eq()
+
+abr_data %>%
+  ggplot(aes(x = term2, y = incvote)) +
+  geom_point(color = "pink") +
   geom_smooth(method = "lm") +
   theme_bw() +
   stat_poly_eq()
