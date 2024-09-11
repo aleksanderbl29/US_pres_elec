@@ -54,7 +54,8 @@ print(approval_plot)
 ## combine the plots
 if (!require(patchwork)) install.packages("patchwork")
 library(patchwork)
-combined_plot <- gdp_plot + approval_plot + plot_layout(ncol = 2)
+combined_plot <- gdp_plot + approval_plot + plot_layout(ncol = 2) +
+  plot_layout(axis_titles = "collect")
 
 # Print the combined plot
 print(combined_plot)
@@ -91,8 +92,6 @@ reg_term <- abramowitz_data_2024 %>%
   filter(year <= 2004) %>%
   lm(formula = incvote ~ term2) %>%
   stargazer(type = "text")
-
-
 
 
 
