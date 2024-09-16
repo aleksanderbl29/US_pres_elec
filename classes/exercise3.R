@@ -145,9 +145,7 @@ our_model_lag <- our_data %>%
      data = .)
 summary(our_model_lag)
 modelsummary(list(our_model,
-                  our_model_lag,
-                  fundamentals_all,
-                  fundamentals_abr),
+                  our_model_lag),
              stars = TRUE)
 
 
