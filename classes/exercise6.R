@@ -118,7 +118,7 @@ map_data <- usmap %>%
 # Plot the map
 ggplot(map_data, aes(long, lat, group = group, fill = corr)) +
   geom_polygon(color = "black") +
-  scale_fill_gradient2(low = "blue", high = "red", mid = "white", midpoint = 0) +
+  scale_fill_gradient2(low = "red", high = "lightgreen", mid = "white", midpoint = 0) +
   theme_minimal() +
   labs(title = "Correlation with Illinois", fill = "Correlation")
 
@@ -140,6 +140,6 @@ map_data <- usmap %>%
 # Plot the map
 ggplot(map_data, aes(long, lat, group = group, fill = corr)) +
   geom_polygon(color = "black") +
-  scale_fill_gradient2(low = "blue", high = "red", mid = "white", midpoint = 0) +
+  scale_fill_gradient2(low = "red", high = "lightgreen", mid = "white", midpoint = 0) +
   theme_minimal() +
   labs(title = "Correlation with Illinois", fill = "Correlation")
