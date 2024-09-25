@@ -70,7 +70,8 @@ urban_data <- read_excel(urban_file) %>%
 
 States <- States %>% 
   left_join(urban_data, by = c("state" = "state_abbrev",
-                               "state_name" = "state_name"))
+                               "state_name" = "state_name")) %>% 
+  filter(state != "DC")
 ```
 
 
@@ -125,13 +126,30 @@ wrap_plots(printed_plot) +
   plot_layout(axis_titles = "collect")
 ```
 
+## Select relevant factors
+
+```{r}
+#| echo: true
+#| code-line-numbers: "|1-2,5-13"
+
+subset_of_vars <- States %>% 
+  select(
+    dem,
+    rep,
+    white_pct,
+    black_pct,
+    hisp_other_pct,
+    college_pct,
+    pct_white_evangel,
+    Gender_ratio,
+    x2020_pct_urban_pop,
+    wwc_pct
+  )
+```
+
 ## Plot only relevant factors
 
 ```{r}
-subset_of_vars <- States %>% 
-  select(dem, rep, white_pct, black_pct, dem, rep, hisp_other_pct, college_pct, pct_white_evangel,
-         Gender_ratio, x2020_pct_urban_pop, wwc_pct)
-
 printed_plot <- lapply(colnames(subset_of_vars), plot_sociodem, df = subset_of_vars)
 wrap_plots(printed_plot[-c(1,2)]) +
   plot_layout(axis_titles = "collect") &
@@ -164,4 +182,123 @@ corrplot_data %>%
   corrplot(type = "upper", order = "original",
            tl.col = "black", tl.srt = 45)
 ```
+
+# Maps
+
+```{r create-correlations}
+# Create new dataset with only the selected vars
+subset <- States %>%
+  filter(!is.na(state)) %>%
+  arrange(state) %>%
+  # select(state, dem, other, pct_white_evangel, pop,
+  #        #average_log_pop_within_5_miles,
+  #        white_pct, black_pct,
+  #        hisp_other_pct, college_pct, median_age) %>%
+  select(c(state, pct_white_evangel, average_log_pop_within_5_miles, white_pct,
+           black_pct, hisp_other_pct, college_pct, median_age, wwc_pct)) %>%
+  pivot_longer(cols = -state, names_to = "variable", values_to = "value") %>%
+  filter(!is.na(value)) %>%
+  arrange(state, variable)
+
+# Rescale each variable using min-max scaling.
+subset_min_max <- subset %>%
+  group_by(variable) %>%
+  mutate(value = (value - min(value, na.rm = TRUE)) /
+           (max(value, na.rm = TRUE) - min(value, na.rm = TRUE))) %>%
+  ungroup()
+
+# Convert the dataframe from long to wide format, where each row is a variable, each
+# column is a state, and each cell is a rescaled value.
+subset_wide <- subset_min_max %>%
+  pivot_wider(names_from = state, values_from = value) # %>% select(-variable)
+
+# Calculate between-state correlations, and map correlations (use Illinois as a reference
+# state). Hint: you can use the maps package, and run the command
+# (usmap <- map_data("state")) to get state coordinates
+
+usmap <- map_data("state")
+
+names <- States %>%
+  mutate(region = tolower(state_name)) %>%
+  rename(abbr = state) %>%
+  select(abbr, region)
+
+# Calculate state correlations for all states
+correlations <- subset_wide %>%
+  select(-variable) %>%
+  cor() %>%
+  as_tibble() %>%
+  mutate(state = colnames(.)) %>%
+  relocate(state, .before = AK)
+```
+
+## Correlation with Illinois
+
+```{r}
+correlations_il <- correlations %>%
+  mutate(IL = NA) %>%
+  pivot_longer(cols = -state, names_to = "abbr", values_to = "cor") %>%
+  filter(state == "IL") %>%
+  left_join(names)
+
+# Merge correlation data with map data
+map_data_il <- usmap %>%
+  filter(region %in% correlations_il$region) %>%
+  left_join(correlations_il, by = "region")
+
+# Plot the map
+ggplot(map_data_il, aes(long, lat, group = group, fill = cor)) +
+  geom_polygon(color = "black") +
+  scale_fill_gradient2(low = "red", high = "lightgreen", mid = "white",
+                       midpoint = 0, limits = c(-1, 1)) +
+  theme_minimal() +
+  labs(fill = "Correlation")
+```
+
+## Correlation with Texas
+
+```{r}
+correlations_tx <- correlations %>%
+  mutate(TX = NA) %>%
+  pivot_longer(cols = -state, names_to = "abbr", values_to = "cor") %>%
+  filter(state == "TX") %>%
+  left_join(names)
+
+# Merge correlation data with map data
+map_data_tx <- usmap %>%
+  filter(region %in% correlations_tx$region) %>%
+  left_join(correlations_tx, by = "region")
+
+# Plot the map
+ggplot(map_data_tx, aes(long, lat, group = group, fill = cor)) +
+  geom_polygon(color = "black") +
+  scale_fill_gradient2(low = "red", high = "lightgreen", mid = "white",
+                       midpoint = 0, limits = c(-1, 1)) +
+  theme_minimal() +
+  labs(fill = "Correlation")
+```
+
+## Correlation with New York
+
+```{r}
+correlations_ny <- correlations %>%
+  mutate(NY = NA) %>%
+  pivot_longer(cols = -state, names_to = "abbr", values_to = "cor") %>%
+  filter(state == "NY") %>%
+  left_join(names)
+
+# Merge correlation data with map data
+map_data_ny <- usmap %>%
+  filter(region %in% correlations_ny$region) %>%
+  left_join(correlations_ny, by = "region")
+
+# Plot the map
+ggplot(map_data_ny, aes(long, lat, group = group, fill = cor)) +
+  geom_polygon(color = "black") +
+  scale_fill_gradient2(low = "red", high = "lightgreen", mid = "white",
+                       midpoint = 0, limits = c(-1, 1)) +
+  theme_minimal() +
+  labs(fill = "Correlation")
+```
+
 
