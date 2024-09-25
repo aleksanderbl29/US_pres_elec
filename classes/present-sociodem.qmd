@@ -1,0 +1,167 @@
+---
+title: Our choice of Sociodemographics
+authors:
+  - Aleksander Bang-Larsen
+  - Christoffer Toft Sigh
+  - Matias Pedersen
+  - Michael Potter
+  - Nathalie Mortensen
+format: 
+  revealjs: 
+    theme: default
+---
+
+## Load the data and pkgs
+
+- Packages
+
+```{r pkgs}
+#| echo: true
+library(tidyverse)
+library(corrplot)
+library(cowplot)
+library(mapdata)
+library(usdata)
+library(patchwork)
+```
+
+- Data
+
+```{r load-data}
+#| echo: true
+#| code-line-numbers: "1-2"
+dataset_file <- "../../6 - Sociodemographics/States.Rda"
+load(dataset_file)
+
+updated_dataset_file <- "../../6 - Sociodemographics/ACS_2023.Rda"
+load(updated_dataset_file)
+```
+
+## Merge our data
+
+```{r}
+#| echo: true
+library(readxl)
+gender_file <- "../../6 - Sociodemographics/Gender.xlsx"
+Gender <- read_excel(gender_file)
+
+states_1 <- subset(States, select = c(state_name, state))
+
+Gender_with_abbr <- Gender %>% 
+  left_join(states_1, by = "state_name") %>% 
+  rename(Gender_ratio = `Sex ratio (males per 100 females)`)
+
+gender_done <- subset(Gender_with_abbr, select = c(state, Gender_ratio))
+
+ACS_2023_merged <- States %>% 
+  left_join(gender_done, by = "state") %>% 
+  mutate(Gender_ratio = as.numeric(Gender_ratio))
+
+#Change dataset
+States <- ACS_2023_merged %>%
+  # rename(pct_white_evangel = white_evangel_pct,
+  #        pop = pop_total) %>%
+  mutate(state_name = usdata::abbr2state(state))
+
+urban_file <- "../../6 - Sociodemographics/State_Urban_Rural_Pop_2020_2010.xlsx" 
+urban_data <- read_excel(urban_file) %>% 
+  janitor::clean_names() %>% 
+  select(state_abbrev, state_name, x2020_pct_urban_pop)
+
+States <- States %>% 
+  left_join(urban_data, by = c("state" = "state_abbrev",
+                               "state_name" = "state_name"))
+```
+
+
+## Plot data
+
+```{r}
+#| output: false
+plt <- wesanderson::wes_palette("Chevalier1")
+```
+
+
+```{r}
+xvar_names <- c(
+  "state" = "State",
+  "total_votes" = "Total Votes",
+  "dem" = "Democratic Votes",
+  "rep" = "Republican Votes",
+  "other" = "Votes for other candidates",
+  "state_fips" = "State FIPS", 
+  "pop" = "Population",
+  "white_pct" = "Pct of whites",
+  "black_pct" = "Pct of blacks",
+  "hisp_other_pct" = "Hispanics and others",
+  "college_pct" = "Pct of college in pop",
+  "wwc_pct" = "White working class pct",
+  "median_age" = "Median Age",
+  "pop_density" = "Population density",
+  "pct_white_evangel" = "Percentage of white evangelists",
+  "state_name" = "State name",
+  "Gender_ratio" = "Gender Ratio",
+  "x2020_pct_urban_pop" = "Pct Urban Population"
+)
+```
+
+```{r}
+plot_sociodem <- function(xvar, w_label = FALSE, df) {
+  x_title = xvar_names[xvar]
+  States <- df
+  States %>%
+    ggplot(aes(x = !!sym(xvar), y = dem)) +
+    geom_point(color = plt[1]) +
+    geom_smooth(method = "lm", color = plt[2]) +
+    labs(x = x_title,
+         y = "Democratic vote") +
+    theme_minimal()
+}
+```
+
+```{r}
+printed_plot <- lapply(colnames(States), plot_sociodem, df = States)
+wrap_plots(printed_plot) +
+  plot_layout(axis_titles = "collect")
+```
+
+## Plot only relevant factors
+
+```{r}
+subset_of_vars <- States %>% 
+  select(dem, rep, white_pct, black_pct, dem, rep, hisp_other_pct, college_pct, pct_white_evangel,
+         Gender_ratio, x2020_pct_urban_pop, wwc_pct)
+
+printed_plot <- lapply(colnames(subset_of_vars), plot_sociodem, df = subset_of_vars)
+wrap_plots(printed_plot[-c(1,2)]) +
+  plot_layout(axis_titles = "collect") &
+  cowplot::theme_cowplot()
+```
+
+## Select data and give proper names
+
+```{r}
+#| echo: true
+#| code-line-numbers: "1-3|5-10"
+corrplot_data <- States %>% 
+    select(white_pct, black_pct, dem, rep, hisp_other_pct, college_pct, pct_white_evangel,
+         Gender_ratio, x2020_pct_urban_pop, wwc_pct) %>% 
+  select(order(colnames(.))) # Sort columns alphabetically
+
+colnames(corrplot_data) <- c(
+  "Black", "College", "Democrat", "Gender Ratio",
+  "Other", "White evang", "Republican", "White",
+  "White Working Class", "Urban pct population"
+)
+```
+
+## Corrplot
+
+```{r}
+#| echo: false
+corrplot_data %>%
+  cor(use = 'complete.obs') %>% # Casewise remove NAs
+  corrplot(type = "upper", order = "original",
+           tl.col = "black", tl.srt = 45)
+```
+

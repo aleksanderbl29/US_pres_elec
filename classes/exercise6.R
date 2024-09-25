@@ -71,7 +71,9 @@ States %>%
 # (you can exclude variables such as state name or identifier).
 # What do you observe?
 
-corrplot_data <- States |>
+corrplot_data <- States %>%
+  filter(state != "AK",
+         state != "DC") %>%
   select(-state, -state_name, -state_fips, -average_log_pop_within_5_miles) %>%
   select(order(colnames(.)))
 
@@ -145,7 +147,6 @@ correlations <- subset_wide %>%
   mutate(state = colnames(.)) %>%
   relocate(state, .before = AK)
 
-
 correlations_il <- correlations %>%
   mutate(IL = NA) %>%
   pivot_longer(cols = -state, names_to = "abbr", values_to = "cor") %>%
@@ -202,4 +203,8 @@ wrap_plots(A = il_map, B = tx_map, design = design) +
   plot_layout(guides = "collect") &
   theme(legend.position = "right",
         legend.justification = "right")
+
+
+
+
 
