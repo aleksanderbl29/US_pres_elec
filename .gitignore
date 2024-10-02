@@ -6,3 +6,12 @@
 README.html
 .env
 *.stan
+
+_output
+
+/.quarto/
+
+class8_data
+
+*.rda
+*.Rda
