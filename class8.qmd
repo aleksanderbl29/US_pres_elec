@@ -1,0 +1,240 @@
+---
+format:
+  html:
+    code-fold: true
+    code-summary: Show the code
+execute: 
+  output: false
+---
+
+## Question 1
+
+```{r setup}
+#| code-summary: Setup environment
+# Setup the environment
+## Detect cores
+options(mc.cores = parallel::detectCores())
+
+## Load pkgs
+library(rstan)
+library(tidyverse)
+library(lubridate)
+library(shinystan)
+library(rmarkdown)
+library(data.table)
+library(patchwork)
+
+## Declare poll_download
+poll_download <- function() {
+  old_data <- read_csv("data/poll_list.csv")
+  url <- "https://projects.fivethirtyeight.com/polls/data/president_polls.csv"
+  new_data <- read_csv(url)
+  
+  if (old_data == new_data) {
+    print("No new data")
+  } else if (!old_data == new_data) {
+    print("The data on disk is out-dated")
+    print("Updating data...")
+    if (!dir.exists("data/old_data/poll_list/")) {
+      print("Creating old_data directory")
+      dir.create("data/old_data/poll_list/", recursive = TRUE)
+    }
+    write_csv(old_data, paste0("data/old_data/poll_list/", today(), ".csv"))
+    print("Archiving data on disk")
+    write_csv(new_data, "data/poll_list.csv")
+    print("Writing new data to poll_list.csv")
+  }
+}
+```
+
+1. Run the first part of the model (inputting the polls).
+
+```{r input-polls}
+#| code-summary: Input the polls
+#| output: true
+# Import 2024 polling data (+ state polls)
+all_polls <- read_csv("class8_data/poll_list.csv")
+
+#Wrangle#
+all_polls <- all_polls %>%
+  mutate(
+    grp = paste(poll_id, pollster_rating_id),
+    pollpollsterID = match(grp, unique(grp))
+  )
+
+all_polls <- filter(all_polls,
+                    candidate_name == "Kamala Harris" |
+                      candidate_name == "Donald Trump")
+
+all_polls <- all_polls %>%
+  group_by(pollpollsterID) %>%
+  mutate(
+    TrumpSupport = case_when(candidate_name == "Donald Trump" ~ pct),
+    HarrisSupport = case_when(candidate_name == "Kamala Harris" ~ pct)
+  ) %>%
+  fill(TrumpSupport, .direction = "up") %>%
+  fill(HarrisSupport)  %>%
+  filter(row_number(pollpollsterID) == 1)
+
+all_polls <- all_polls %>%
+  filter(state != "Nebraska CD-2" &
+           state != "Maine CD-1" & state != "Maine CD-2" & state != "National")
+
+names(all_polls)[names(all_polls) == 'state'] <- 'state_name'
+
+states2016 <- read_csv("class8_data/2016.csv")
+
+states2016 <- states2016 %>%
+  select(state, state_name)
+
+all_polls <- merge(all_polls, states2016, by = "state_name")
+
+```
+
+
+2. Inspect the data frame (df) that you have created.
+
+```{r inspect}
+#| code-summary: Inspect the dataframe
+#| output: true
+#| collapse: true
+summary(all_polls)
+```
+
+3. Make a plot that shows how poll predictions (p_dem) changed over time for each polled state.
+
+```{r plot}
+#| output: true
+all_polls %>% 
+  ggplot(aes(x = created_at,
+             y = HarrisSupport,
+             color = state_name)) +
+  geom_point() +
+  geom_line(aes(group = state_name)) +
+  labs(x = "Time of poll",
+       y = "Support for Harris (p_dem)") +
+  theme_bw() +
+  theme(legend.position = "none")
+```
+
+```{r define-facet-plot}
+#| output: true
+#| collapse: true
+plot_facet <- function(stateabb) {
+  main_title <- all_polls %>% 
+    filter(state_abb == stateabb) %>% 
+    pull(state_name)
+  
+  all_polls %>% 
+    filter(state_abb == stateabb) %>% 
+    ggplot(aes(x = created_at,
+               y = HarrisSupport)) +
+    geom_point() +
+    geom_line(aes(group = state_name)) +
+    labs(x = "Time of poll",
+         y = "Support for Harris (p_dem)",
+         subtitle = main_title) +
+    lims(x = c(min(all_polls$created_at), max(all_polls$created_at))) +
+    theme_minimal() +
+    theme(legend.position = "none")
+}
+```
+
+```{r facet-plot}
+#| output: true
+# states_abbr <- unique(all_polls$state_abb)
+
+states_abbr_summary <- all_polls %>% 
+  select(state_abb, created_at) %>% 
+  group_by(state_abb) %>% 
+  summarise_all(n_distinct) %>% 
+  arrange(desc(created_at))
+
+states_abbr <- states_abbr_summary %>%
+  filter(created_at > 4) %>% 
+  pull(state_abb)
+
+small_polls <- states_abbr_summary %>% 
+  filter(created_at < 4,
+         created_at > 1) %>% 
+  pull(state_abb)
+
+single_polls <- states_abbr_summary %>% 
+  filter(created_at == 1) %>% 
+  pull(state_abb)
+
+all_plots <- lapply(states_abbr, plot_facet)
+
+all_polls %>% 
+  filter(state_abb %in% small_polls) %>% 
+    ggplot(aes(x = created_at,
+               y = HarrisSupport)) +
+    geom_point() +
+    geom_line(aes(group = state_name)) +
+    labs(x = "Time of poll",
+         y = "Support for Harris (p_dem)",
+         subtitle = paste(small_polls)) +
+    lims(x = c(min(all_polls$created_at), max(all_polls$created_at))) +
+    ggrepel::geom_label_repel(aes(label = state_abb))
+    theme_minimal() +
+    theme(legend.position = "none")
+
+
+wrap_plots(all_plots) +
+  plot_layout(
+    axis_titles = "collect",
+    axes = "collect",
+    guides = "collect",
+    ncol = 4
+  )
+```
+
+
+## Question 2
+
+1. Run part 2 of the model (creating priors). Here you will be also using other datasets (2016.csv and 2020.csv).
+
+```{r}
+#| code-summary: Define functions
+corr_matrix <- function(m){
+  (diag(m)^-.5 * diag(nrow = nrow(m))) %*% m %*% (diag(m)^-.5 * diag(nrow = nrow(m)))
+}
+
+cov_matrix <- function(n, sigma2, rho){
+  m <- matrix(nrow = n, ncol = n)
+  m[upper.tri(m)] <- rho
+  m[lower.tri(m)] <- rho
+  diag(m) <- 1
+  (sigma2^.5 * diag(n))  %*% m %*% (sigma2^.5 * diag(n))
+}
+
+logit <- function(x) {
+  log(x / (1 - x))
+}
+
+inv_logit <- function(x) {
+  1 / (1 + exp(-x))
+}
+```
+
+
+```{r create-priors}
+#| code-summary: Create priors
+
+```
+
+
+2. Discuss what mu_b_prior is (termed hij in the Linzer article).
+
+
+3. Examine whether the structural model predicts an electoral college victory for Harris
+(see Exercise 4, Q2 for ideas of how to do this).
+
+## Question 3
+
+1. Run part 3 of the model (it will take a bit of time...). Note that the stan code is a separate file.
+
+2. What do the results of running the code ‘Stan summary’ tell us?
+
+3. Run part 4 (plots). Discuss what each of the plots tell us. How did the probability of a
+democratic victory change over time in the states?
