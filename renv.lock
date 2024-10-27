@@ -21,7 +21,7 @@
       "Package": "BH",
       "Version": "1.84.0-0",
       "Source": "Repository",
-      "Repository": "CRAN",
+      "Repository": "https://cloud.r-project.org",
       "Hash": "a8235afbcd6316e6e91433ea47661013"
     },
     "DBI": {
@@ -168,6 +168,13 @@
         "R"
       ],
       "Hash": "f38a72a419b91faac0ce5d9eee04c120"
+    },
+    "SparseGrid": {
+      "Package": "SparseGrid",
+      "Version": "0.8.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "4b12daa3195694b52af7a120cbce7331"
     },
     "SparseM": {
       "Package": "SparseM",
@@ -606,10 +613,10 @@
     },
     "corrplot": {
       "Package": "corrplot",
-      "Version": "0.94",
+      "Version": "0.95",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "b575018abd67c252491ffce5ecb94630"
+      "Hash": "f52d5babd10d348f9c0771386b61ea4a"
     },
     "cowplot": {
       "Package": "cowplot",
@@ -1224,7 +1231,7 @@
     },
     "gtable": {
       "Package": "gtable",
-      "Version": "0.3.5",
+      "Version": "0.3.6",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -1233,9 +1240,10 @@
         "glue",
         "grid",
         "lifecycle",
-        "rlang"
+        "rlang",
+        "stats"
       ],
-      "Hash": "e18861963cbc65a27736e02b3cd3c4a0"
+      "Hash": "de949855009e2d4d0e52a844e30617ae"
     },
     "gtools": {
       "Package": "gtools",
@@ -1617,6 +1625,20 @@
       ],
       "Hash": "b0fe731e5bd801dda962ac5057a548f6"
     },
+    "lqmm": {
+      "Package": "lqmm",
+      "Version": "1.5.8",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "SparseGrid",
+        "nlme",
+        "stats",
+        "utils"
+      ],
+      "Hash": "f72ca98505ca954f96ca18cbcd8f3fef"
+    },
     "lubridate": {
       "Package": "lubridate",
       "Version": "1.9.3",
@@ -1874,6 +1896,20 @@
       ],
       "Hash": "d413e0fef796c9401a4419485f709ca1"
     },
+    "pacman": {
+      "Package": "pacman",
+      "Version": "0.5.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "methods",
+        "remotes",
+        "stats",
+        "utils"
+      ],
+      "Hash": "b37932b67288bc62bb81686b2f337a7d"
+    },
     "parameters": {
       "Package": "parameters",
       "Version": "0.22.2",
@@ -1909,6 +1945,17 @@
         "utils"
       ],
       "Hash": "e23fb9ecb1258207bcb763d78d513439"
+    },
+    "pbapply": {
+      "Package": "pbapply",
+      "Version": "1.7-2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "parallel"
+      ],
+      "Hash": "68a2d681e10cf72f0afa1d84d45380e5"
     },
     "performance": {
       "Package": "performance",
@@ -2249,6 +2296,20 @@
         "tibble"
       ],
       "Hash": "76c9e04c712a05848ae7a23d2f170a40"
+    },
+    "remotes": {
+      "Package": "remotes",
+      "Version": "2.5.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "methods",
+        "stats",
+        "tools",
+        "utils"
+      ],
+      "Hash": "3ee025083e66f18db6cf27b56e23e141"
     },
     "renv": {
       "Package": "renv",
@@ -2785,6 +2846,17 @@
       ],
       "Hash": "a84e2cc86d07289b3b6f5069df7a004c"
     },
+    "tictoc": {
+      "Package": "tictoc",
+      "Version": "1.2.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "methods"
+      ],
+      "Hash": "646895a33d57984ce7534249bd9adf64"
+    },
     "tidycensus": {
       "Package": "tidycensus",
       "Version": "1.6.6",
@@ -2974,6 +3046,30 @@
         "tibble"
       ],
       "Hash": "924b597b270e2f6a84387f563abadb39"
+    },
+    "usmap": {
+      "Package": "usmap",
+      "Version": "0.7.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "rlang",
+        "usmapdata"
+      ],
+      "Hash": "ffe4a903de2bf9d6ebcfea4e4c06babf"
+    },
+    "usmapdata": {
+      "Package": "usmapdata",
+      "Version": "0.3.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "rlang",
+        "sf"
+      ],
+      "Hash": "c7048cc76fe39d3e68c9b70efd287294"
     },
     "utf8": {
       "Package": "utf8",
