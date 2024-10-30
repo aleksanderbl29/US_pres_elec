@@ -17,4 +17,5 @@ class8_data
 *.Rda
 
 data/
+forecast/
 tinytable_assets/
