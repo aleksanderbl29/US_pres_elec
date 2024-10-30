@@ -538,9 +538,39 @@ abramowitz <- abramowitz %>%
 
 abramowitz$issue_diff[abramowitz$year == 2000] <- median(abramowitz$issue_diff, na.rm = TRUE)
 
+construction <- fredr::fredr(series_id = "UNDCONTSA") %>% # Construction - Seasonally adj.
+  mutate(year = year(date)) %>%
+  group_by(year) %>%                # Group by year
+  summarise(total_value = sum(value)) %>%
+  mutate(construction_rate = 100 * (total_value - lag(total_value))/lag(total_value)) %>%
+  filter(year != 1970, # remove first year as rate cannot be calculated without data from prev. year
+         year <= 2020)
+
+construction_monthly <- fredr::fredr(series_id = "UNDCONTSA") %>% # Construction - Seasonally adj.
+  mutate(year = year(date),
+         month_year = glue::glue("{year}_{month(date)}")) %>%     # Extract year from date
+  group_by(month_year) %>%            # Group by month_year
+  summarise(total_value = sum(value)) %>%
+  mutate(construction_rate = 100 * (total_value - lag(total_value))/lag(total_value)) %>%
+  filter(month_year != "1970_1") %>% # remove first year as rate cannot be calculated without data from prev. year
+  mutate(year = as.double(substr(month_year, 1, 4))) %>%
+  ungroup() %>%
+  group_by(year) %>%
+  summarise(mean_construction_rate = mean(construction_rate),
+            median_construction_rate = median(construction_rate))
+
+construction_median_2024 <- construction_monthly$median_construction_rate[construction_monthly$year == max(construction_monthly$year)]
+
+construction <- construction %>%
+  left_join(construction_monthly, join_by(year)) %>%
+  select(-total_value)
+
+abramowitz <- abramowitz %>%
+  left_join(construction, join_by(year))
+
 # run  TFC model --> here we can make a change
 prior_model <- lm(
-  formula = incvote ~  juneapp + q2gdp + Con_Sen + issue_diff, # model equation
+  formula = incvote ~  juneapp + q2gdp + Con_Sen + issue_diff + construction_rate, # model equation
   data = abramowitz # source data for  model
 )
 
@@ -549,8 +579,11 @@ national_mu_prior <- predict(object = prior_model, # your  model
                              newdata = tibble(q2gdp = 3, # these values are for 2024 predictions
                                               juneapp = -20, ## Bruger bidens model
                                               issue_diff = -5, ## forskel i issue - hvem de anser som værende bedst til at løse det issue de synes er bedst
-                                              Con_Sen = 74.467)) ## Consumer sentiment i år
+                                              Con_Sen = 74.467,
+                                              construction_rate = construction_median_2024)) ## Consumer sentiment i år
 
+print(glue::glue("Prior is {national_mu_prior} for Harris"))
+# run TFC model
 # put predictions on correct scale
 national_mu_prior <- national_mu_prior / 100
 
