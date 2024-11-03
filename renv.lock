@@ -1,10 +1,10 @@
 {
   "R": {
-    "Version": "4.4.1",
+    "Version": "4.4.2",
     "Repositories": [
       {
         "Name": "CRAN",
-        "URL": "https://cran.rstudio.com"
+        "URL": "https://cloud.r-project.org"
       },
       {
         "Name": "aleksanderbl29",
@@ -21,7 +21,7 @@
       "Package": "BH",
       "Version": "1.84.0-0",
       "Source": "Repository",
-      "Repository": "https://cloud.r-project.org",
+      "Repository": "CRAN",
       "Hash": "a8235afbcd6316e6e91433ea47661013"
     },
     "DBI": {
@@ -2453,7 +2453,7 @@
       "Package": "s2",
       "Version": "1.1.7",
       "Source": "Repository",
-      "Repository": "https://packagemanager.posit.co/cran/latest",
+      "Repository": "RSPM",
       "Requirements": [
         "R",
         "Rcpp",
@@ -2491,7 +2491,7 @@
         "rappdirs",
         "rlang"
       ],
-      "Hash": "3eea8b7c0d780b0d04fff9eb99dc7e6d"
+      "Hash": "b0841a4f66a6d297b3ada8bbbc2106b0"
     },
     "scales": {
       "Package": "scales",
@@ -3029,7 +3029,7 @@
       "Package": "units",
       "Version": "0.8-5",
       "Source": "Repository",
-      "Repository": "https://packagemanager.posit.co/cran/latest",
+      "Repository": "RSPM",
       "Requirements": [
         "R",
         "Rcpp"
@@ -3046,30 +3046,6 @@
         "tibble"
       ],
       "Hash": "924b597b270e2f6a84387f563abadb39"
-    },
-    "usmap": {
-      "Package": "usmap",
-      "Version": "0.7.1",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "rlang",
-        "usmapdata"
-      ],
-      "Hash": "ffe4a903de2bf9d6ebcfea4e4c06babf"
-    },
-    "usmapdata": {
-      "Package": "usmapdata",
-      "Version": "0.3.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "rlang",
-        "sf"
-      ],
-      "Hash": "c7048cc76fe39d3e68c9b70efd287294"
     },
     "utf8": {
       "Package": "utf8",
