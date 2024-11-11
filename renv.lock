@@ -2528,7 +2528,7 @@
     },
     "sf": {
       "Package": "sf",
-      "Version": "1.0-17",
+      "Version": "1.0-19",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -2547,7 +2547,7 @@
         "units",
         "utils"
       ],
-      "Hash": "453a7d0263eae87a7831242a74fe9b60"
+      "Hash": "fe02eec2f6b3ba0e24afe83d5ccfb528"
     },
     "shiny": {
       "Package": "shiny",
