@@ -1,0 +1,49 @@
+---
+title: Synopsis on Forecasting the US Presidential Election 2024
+format:
+  arxiv-pdf:
+    keep-tex: true
+author:
+  - name: Aleksander Bang-Larsen
+    affiliation: Aarhus University
+runninghead: "The US Presidential Election"
+---
+
+# Forecasting the US Presidential Election
+
+```{r}
+#| echo: false
+suppressPackageStartupMessages(library(tidyverse))
+plot(starwars[2:4])
+```
+```{r}
+#| echo: false
+suppressPackageStartupMessages(library(tidyverse))
+plot(starwars[2:4])
+```
+```{r}
+#| echo: false
+suppressPackageStartupMessages(library(tidyverse))
+plot(starwars[2:4])
+```
+```{r}
+#| echo: false
+suppressPackageStartupMessages(library(tidyverse))
+plot(starwars[2:4])
+```
+```{r}
+#| echo: false
+suppressPackageStartupMessages(library(tidyverse))
+plot(starwars[2:4])
+```
+```{r}
+#| echo: false
+suppressPackageStartupMessages(library(tidyverse))
+plot(starwars[2:4])
+```
+```{r}
+#| echo: false
+suppressPackageStartupMessages(library(tidyverse))
+plot(starwars[2:4])
+```
+
