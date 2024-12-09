@@ -1,0 +1,60 @@
+---
+title: "Modeling the US Presidential Election"
+format: dashboard
+---
+
+# Results
+
+```{r}
+#load packages
+library(tidyverse, quietly = TRUE)
+```
+
+
+```{r}
+#| output: false
+# load results
+out <- read_rds("_output/Model output.rds")
+# source elements from model script
+sourced <- TRUE
+source("model.R")
+# declare helper-functions
+source("R/helper.R")
+source("review_output_Harris.R")
+```
+
+## Row
+
+```{r}
+#######################################################################
+## GET ELECTORAL VOTE PREDICTION
+#######################################################################
+
+## Extract predicted score
+predicted_score <- rstan::extract(out, pars = "predicted_score")[[1]]
+# this is an 'array' with dimensions: sims x days x states
+
+```
+
+
+## Row
+
+```{r}
+#######################################################################
+# View single parameters (i.e. not the random effects)
+# this can be edited by changing parameter names or
+# adding lines that extract futher single parameters
+tibble(
+  logit_nat = rstan::extract(out, pars = "logit_pi_democrat_national")[[1]],
+  logit_state = rstan::extract(out, pars = "logit_pi_democrat_state")[[1]],
+  state_cov = rstan::extract(out, pars = "sigma_rho")[[1]]
+) %>%
+  gather(parameter, value) %>%
+  ggplot(., aes(x = value)) +
+  geom_histogram(binwidth = 0.001) +
+  facet_grid(rows = vars(parameter),
+             scales = "free") +
+  theme_bw()
+#######################################################################
+```
+

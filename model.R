@@ -10,10 +10,10 @@
 options(mc.cores = parallel::detectCores())
 n_chains <- 4
 n_cores <- getOption("mc.cores")
-n_sampling <- 10000
 n_warmup <- 1000
-n_refresh <- n_sampling * 0.1
 n_iter <- 3500
+n_sampling <- n_iter * 0.1
+n_refresh <- n_sampling * 0.1
 
 ###############################################################
 ## Libraries
@@ -111,7 +111,20 @@ pollster_ratings <- read_csv("data/pollster_ratings.csv")
 
 rm(sample_data)
 
-polls <- read_csv("https://projects.fivethirtyeight.com/polls/data/president_polls.csv") %>%
+if (!exists("sourced")) {
+  url <- "https://projects.fivethirtyeight.com/2024-general-data/538_2024_election_forecast_data.zip"
+  destfile <- "fivethirtyeight_data"
+  download_folder_name <- "data/downloads/538_2024_election_forecast_data"
+  filename <- "data/poll_list.csv"
+  download.file(url, destfile)
+  unzip(destfile, overwrite = TRUE)
+  file.copy(from = paste0(download_folder_name, "/", filename),
+            to = filename,
+            overwrite = TRUE)
+  file.remove(destfile)
+}
+
+polls <- read_csv("data/poll_list.csv") %>%
   mutate(
     grp = paste(poll_id, pollster_rating_id),
     pollpollsterID = match(grp, unique(grp))
@@ -128,12 +141,6 @@ polls <- read_csv("https://projects.fivethirtyeight.com/polls/data/president_pol
   fill(harris) %>%
   filter(row_number(pollpollsterID) == 1) %>%
   ungroup() %>%
-  mutate(state_abb = usdata::state2abbr(state),
-         start_date = mdy(start_date),
-         end_date = mdy(end_date)) %>%
-  left_join(regions, join_by(state)) %>%
-  mutate(region_computed = region) %>%
-  left_join(pollster_ratings, join_by(pollster_rating_name)) %>%
   dplyr::select(
     state_abb,
     pollster_rating_name,
@@ -147,9 +154,7 @@ polls <- read_csv("https://projects.fivethirtyeight.com/polls/data/president_pol
     pollster_wt,
     harris,
     trump
-  ) %>% # pick variables to keep (do not have data on undecided and other - could include later)
-  filter(!is.na(harris) & !is.na(trump)) %>% # Remove polls that do not have data on both candidates
-  filter(!is.na(sample_size)) # Remove polls that does not disclose sample size
+  )# %>% # pick variables to keep (do not have data on undecided and other - could include later)
 
 write_csv(polls, file = glue::glue("data/old_data/poll_list/poll_list_{today()}.csv"))
 
@@ -162,6 +167,7 @@ df <- read_csv(file = glue::glue("data/old_data/poll_list/poll_list_{today()}.cs
     end = ymd(end_date),
     t = begin + (as.numeric(end - begin) / 2)
   )  # Assign poll date to middle of field period
+
 
 #Rename variables#
 df <- df %>%
@@ -268,7 +274,7 @@ df <- df %>%
 ## Reading in 2020 election data
 ###############################################################
 library("readxl")
-states2020 <- read_excel("data/2020.xlsx") %>%
+states2020 <- read_csv("data/2020.csv") %>%
   mutate(score = biden_count / (biden_count + trump_count), # state-level dem % of 2-party vote 2020
          national_score = sum(biden_count) / sum(biden_count + trump_count), # nat. dem % of 2-party vote 2020
          delta = score - national_score, # state diffs vs. national
@@ -297,8 +303,8 @@ names(ev_state) <- state_abb_list # label electoral votes w/ state abbreviation
 #create state correlation matrix#
 ###############################################################
 #Basic state data -- vote returns in previous elections#
-state_data <- read_csv("data/potus_results_76_20.csv")
-state_data <- state_data %>%
+vote_data <- read_csv("data/potus_results_76_20.csv")
+vote_data <- vote_data %>%
   select(year, state, dem) %>%
   group_by(state) %>%
   mutate(dem = dem) %>%
@@ -307,13 +313,26 @@ state_data <- state_data %>%
          value = dem)  %>%
   ungroup() %>%
   na.omit %>%
-  filter(variable == 2020)
+  filter(variable >= 1996)
+
+vote_data_correlation <- vote_data %>%
+  group_by(variable) %>%
+  filter(state != "DC") %>%
+  # scale all variables (value - minimum) / original range --> varies b/w 0 and 1
+  mutate(value = (value - min(value, na.rm=T)) /
+           (max(value, na.rm=T) - min(value, na.rm=T))) %>%
+  # now spread
+  spread(state, value) %>%
+  na.omit() %>%
+  ungroup() %>%
+  select(-variable)
 
 #Census data#
 census <- read_csv("data/acs_2023_variables.csv")
-census <- census %>%
+socio_dem <- census %>%
   filter(!is.na(state)) %>%
-  select(-c(state_fips, pop_total, pop_density)) %>%
+  filter(state != "DC") %>%
+  select(-c(state_fips, pop_total, pop_density, black_pct, hisp_pct)) %>%
   group_by(state) %>%
   gather(variable,
          value,
@@ -321,9 +340,8 @@ census <- census %>%
   ungroup()
 
 #Combine with state vote returns from 2020#
-state_data <- state_data %>%
-  mutate(variable = as.character(variable)) %>%
-  bind_rows(census)
+socio_dem <- socio_dem %>%
+  mutate(variable = as.character(variable))
 
 # add urbanicity
 urbanicity <- read.csv("data/urbanicity_index.csv") %>%
@@ -333,7 +351,7 @@ urbanicity <- read.csv("data/urbanicity_index.csv") %>%
          2:(ncol(.)))
 
 #Combine#
-state_data <- state_data %>%
+socio_dem <- socio_dem %>%
   bind_rows(urbanicity)
 
 #Add percentage white evangelical#
@@ -343,7 +361,7 @@ white_evangel_pct <- read_csv("data/white_evangel_pct.csv") %>%
          2:(ncol(.)))
 
 #Combine#
-state_data <- state_data %>%
+socio_dem <- socio_dem %>%
   bind_rows(white_evangel_pct)
 
 
@@ -355,7 +373,7 @@ Median_income <- read.csv("data/MedianHouseholdIncome2023_Abbrev.csv") %>%
          2:(ncol(.)))
 
 #Combine#
-state_data <- state_data %>%
+socio_dem <- socio_dem %>%
   bind_rows(Median_income)
 
 
@@ -370,20 +388,66 @@ ReligiousUnaffiliated <- read_csv("data/ReligiousUnaffiliated_Abbrev.csv") %>%
 # source ->
 # https://www.pewresearch.org/religious-landscape-study/database/metro-area/washington-dc-metro-area/
 
-state_data <- state_data %>%
+socio_dem <- socio_dem %>%
   bind_rows(ReligiousUnaffiliated)
+
+#Black_pct without black men, age 18-29
+library(readxl)
+black_pct_without <- read_excel("data/share_18-29_blacks_1.xlsx",
+                                sheet = "Without")
+library("readxl")
+states_2020 <- read_excel("data/2020.xlsx") %>%
+  select(c(state, state_name))
+
+black_pct_without <- black_pct_without %>%
+  left_join(states_2020,
+            by = c("state" = "state_name")) %>%
+  select('state.y', 'black_pct_without') %>%
+  rename('state' = 'state.y')
+
+black_pct_without <- black_pct_without %>%
+  gather(variable,
+         value,
+         2:(ncol(.)))
+
+socio_dem <- socio_dem %>%
+  bind_rows(black_pct_without)
+
+#add hispanics witout Cubans
+hispanics_without_cuban <- read.csv("data/noncubanhispanics.csv") %>%
+  gather(variable,
+         value,
+         2:(ncol(.)))
+
+#Combine#
+socio_dem <- socio_dem %>%
+  bind_rows(hispanics_without_cuban)
+
+#Correlation socio
+socio_dem_correlation <- socio_dem %>%
+  group_by(variable) %>%
+  filter(state != "DC") %>%
+  # scale all variables (value - minimum) / original range --> varies b/w 0 and 1
+  mutate(value = (value - min(value, na.rm=T)) /
+           (max(value, na.rm=T) - min(value, na.rm=T))) %>%
+  # now spread
+  spread(state, value) %>%
+  na.omit() %>%
+  ungroup() %>%
+  select(-variable)
 
 ###############################################################
 ## An option: add region#
 # Læs regionsdata ind og vælg relevante kolonner
 library(readxl)
 regions <- read_csv("data/US_States_by_Region.csv") %>%
-  rename(state = State)
+  rename(state = State,
+         region = Region)
 
-regions <-regions %>%
-  select(state = state, Region) %>%       # Vælg staten og regionskolonnerne
+regions <- regions %>%
+  select(state = state, region) %>%       # Vælg staten og regionskolonnerne
   mutate(value = 1) %>%                       # Opret en dummy for hver region
-  spread(Region, value)                       # Konverter region til brede dummy-variabler
+  spread(region, value)                       # Konverter region til brede dummy-variabler
 
 # Erstat NA'er med 0
 regions[is.na(regions)] <- 0
@@ -392,18 +456,11 @@ regions[is.na(regions)] <- 0
 regions <- regions %>%
   gather(variable, value, 2:ncol(.))          # Saml igen for at få variabel-kolonnen
 
-# Bind regionsdata til state_data
-state_data <- state_data %>%
-  bind_rows(regions)                          # Kombiner state_data med de oprettede region dummies
 ###############################################################
 
-# Scale and spread (see materials for session 6)#
-# this normalizes all variables for state cov matrix to fall between 0 and 1#
-# then, it spreads them out so that states are in columns
-# and variables are along rows
-# the final cov matrix gets the covariance between columns (states)
-state_data_long <- state_data %>%
+regions_correlation <- regions %>%
   group_by(variable) %>%
+  filter(state != "DC") %>%
   # scale all variables (value - minimum) / original range --> varies b/w 0 and 1
   mutate(value = (value - min(value, na.rm=T)) /
            (max(value, na.rm=T) - min(value, na.rm=T))) %>%
@@ -417,23 +474,56 @@ state_data_long <- state_data %>%
 # # test of the associations our selected variables return
 # # try entering other states here to see how your choices pan out
 #Recall from session 6 how to make a map#
-ggplot(state_data_long,
-       aes(x = PA,
-           y = OH)) +
-  geom_point() +
-  geom_smooth(method = 'lm')
 
 # make cor matrix
-state_covariance <- cor(state_data_long)
-state_covariance
+vote_state_covariance <- cor(vote_data_correlation)
+vote_state_covariance %>%
+  corrplot::corrplot(type = "upper")
+
+socio_state_covariance <- cor(socio_dem_correlation)
+socio_state_covariance%>%
+  corrplot::corrplot(type = "upper")
+
+regions_state_covariance <- cor(regions_correlation)
+regions_state_covariance%>%
+  corrplot::corrplot(type = "upper")
+
+# Baseline cor
+# baseline_cor <- matrix(data = 1, nrow = 51, ncol = 51)
+baseline_cor <- matrix(data = 1, nrow = 50, ncol = 50)
+
+# Defining weights estimated in seperate model
+baseline_w <- 0.04175
+vote_w <- 0.25825
+region_w <- 0.1
+demographic_w <- 0.6
+
+# Constructing matrix
+C <- (baseline_w * baseline_cor) +
+  (vote_w * vote_state_covariance) +
+  (region_w * regions_state_covariance) +
+  (demographic_w * socio_state_covariance)
+
+# baseline <- baseline_w * baseline_cor
+# vote <- vote_w * vote_state_covariance
+# region <- region_w * regions_state_covariance
+# demographic <- demographic_w * socio_state_covariance
+
+#Fix correlations < 1
+C[C > 1] <- 1
+
+# Adding DC
+C <- cbind(C, c(rep(0, 50), 1))
+C <- rbind(C, c(rep(0, 50), 1))
+rownames(C)[51] <- "DC"
+colnames(C)[51] <- "DC"
 
 # Formula is
 # a*(lambda*C + (1-lambda)*C_1)
 # where C is our correlation matrix with min .3
 # and C_1 is a sq matrix with all 1's
 # lambda=0 is 100% correlation, lambda=1 is our corr matrix
-C <-  cor(state_data_long)
-C[C < 0.3] <- 0.3 # baseline correlation for national poll error
+#C[C < 0.3] <- 0.3 # baseline correlation for national poll error
 
 tmp_C <- C
 diag(tmp_C) <- NA
@@ -538,7 +628,8 @@ abramowitz <- abramowitz %>%
 
 abramowitz$issue_diff[abramowitz$year == 2000] <- median(abramowitz$issue_diff, na.rm = TRUE)
 
-construction <- fredr::fredr(series_id = "UNDCONTSA") %>% # Construction - Seasonally adj.
+#Construction
+construction <- read_csv("data/construction_season_adj.csv") %>%
   mutate(year = year(date)) %>%
   group_by(year) %>%                # Group by year
   summarise(total_value = sum(value)) %>%
@@ -546,7 +637,7 @@ construction <- fredr::fredr(series_id = "UNDCONTSA") %>% # Construction - Seaso
   filter(year != 1970, # remove first year as rate cannot be calculated without data from prev. year
          year <= 2020)
 
-construction_monthly <- fredr::fredr(series_id = "UNDCONTSA") %>% # Construction - Seasonally adj.
+construction_monthly <- read_csv("data/construction_season_adj.csv") %>%
   mutate(year = year(date),
          month_year = glue::glue("{year}_{month(date)}")) %>%     # Extract year from date
   group_by(month_year) %>%            # Group by month_year
@@ -566,7 +657,7 @@ construction <- construction %>%
   select(-total_value)
 
 abramowitz <- abramowitz %>%
-  left_join(construction, join_by(year))
+  left_join(construction, by = "year")
 
 # run  TFC model --> here we can make a change
 prior_model <- lm(
@@ -582,10 +673,21 @@ national_mu_prior <- predict(object = prior_model, # your  model
                                               Con_Sen = 74.467,
                                               construction_rate = construction_median_2024)) ## Consumer sentiment i år
 
-print(glue::glue("Prior is {national_mu_prior} for Harris"))
-# run TFC model
 # put predictions on correct scale
 national_mu_prior <- national_mu_prior / 100
+
+# Make prior diff score smaller for swing states
+swing_states <- c(
+  "AZ", "GA", "MI", "NV", "NC", "PA", "WI"
+)
+
+options(scipen = 999)
+
+for (state in swing_states) {
+  cat("Old diff for ", state, prior_diff_score[state], "\n")
+  prior_diff_score[state] <- prior_diff_score[state] * 0.25
+  cat("New diff for ", state, prior_diff_score[state], "\n")
+}
 
 # Mean of mu_b_prior PER STATE (from  model)
 mu_b_prior <- logit(national_mu_prior + prior_diff_score)
@@ -598,8 +700,9 @@ national_mu_prior <- weighted.mean(inv.logit(mu_b_prior), state_weights)
 cat(sprintf('Prior Harris two-party vote is %s\nWith a standard error of %s',
             round(national_mu_prior,3),
             round(median(mu_b_T_scale),3)
-)
-)
+))
+
+## MAKE PRIOR CONFIDENCE WIDER
 
 ###############################################################
 ## --- Adjustment national v state polls
@@ -710,16 +813,20 @@ data <- list(
   random_walk_scale = random_walk_scale
 )
 
-###############################################################
-### Run the model ###
-###############################################################
-out <- stan(file = "stan/poll_model_2024_2.stan", # this is stan model declared above
-            data = data, # data list declared above
-            chains  = n_chains, # number of simultaneous Markov chains
-            warmup = n_warmup, # number of iterations spent on burn in
-            iter = n_iter, #number of iterations per chain
-            cores = n_cores,
-            refresh = n_refresh
-)
+if (!exists("sourced")) {
 
-saveRDS(out, file = "_output/Model output.rds")
+  ###############################################################
+  ### Run the model ###
+  ###############################################################
+  out <- stan(file = "stan/poll_model_2024_2.stan", # this is stan model declared above
+              data = data, # data list declared above
+              chains  = n_chains, # number of simultaneous Markov chains
+              warmup = n_warmup, # number of iterations spent on burn in
+              iter = n_iter, #number of iterations per chain
+              cores = n_cores,
+              refresh = n_refresh
+  )
+
+  saveRDS(out, file = "_output/Model output.rds")
+
+}
