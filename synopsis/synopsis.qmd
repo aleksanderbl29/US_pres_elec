@@ -7,7 +7,14 @@ author:
   - name: Aleksander Bang-Larsen
     affiliation: Aarhus University
 runninghead: "The US Presidential Election"
+output_dir: synopsis
 ---
+
+```{r}
+#| eval: false
+source("_targets_packages.R")
+```
+
 
 # Forecasting the US Presidential Election
 

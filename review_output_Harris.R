@@ -26,7 +26,8 @@
 # plug in here the name of the model you plan to evaluate
 # You can just delete the 'sprintf' part and write in, e.g.:
 # read_rds("name_of_my_model.rds")
-out <- read_rds("_output/Model output.rds")
+# out <- read_rds("_output/Model output.rds")
+# out <- targets::tar_read(stan_run)
 #######################################################################
 
 

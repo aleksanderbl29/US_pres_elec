@@ -534,7 +534,7 @@ C_1 <- matrix(data = 1, nrow = 51, ncol = 51)
 C <- C[1:nrow(C_1), 1:ncol(C_1)]
 a <- 1
 #nat_vote_scale <- 0.01
-nat_vote_scale <-1
+nat_vote_scale <- 1
 new_C <- nat_vote_scale * (lambda * C + (1 - lambda) * C_1) %>% make.positive.definite()
 
 tmp <- new_C

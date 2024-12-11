@@ -1,4 +1,5 @@
 ---
 project:
   type: default
-  output-dir: _output
+  # output-dir: _output
+  execute-dir: project

@@ -7,8 +7,9 @@ rm(list = ls())
 library(tidyverse)
 
 #Load data
-out <- read_rds("_output/Model output.rds") #Load your output, this is just an example using 2020 predictions/results#
-predicted_score <- rstan::extract(out, pars = "predicted_score")[[1]]
+# out <- read_rds("_output/Model output.rds") #Load your output, this is just an example using 2020 predictions/results#
+tar_load(stan_run)
+predicted_score <- rstan::extract(stan_run, pars = "predicted_score")[[1]]
 state_abb_list <- read.csv("data/potus_results_76_20.csv") %>%
   pull(state) %>% unique()
 
