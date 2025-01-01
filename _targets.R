@@ -6,8 +6,10 @@ tar_option_set(
   # Define packages
   packages = c(
     "tidyverse", "rstan", "stringr", "lubridate", "gridExtra", "pbapply",
-    "parallel", "boot", "lqmm", "ggrepel", "Rcpp", "readxl", "corrplot"
-  )
+    "parallel", "boot", "lqmm", "ggrepel", "Rcpp", "readxl", "corrplot",
+    "tinytable", "gt", "ggthemes", "rvest", "aleksandeR", "sf", "scales"
+  ),
+  controller = crew::crew_controller_local(workers = 6)
 )
 
 tar_source()
@@ -241,25 +243,37 @@ list(
     random_walk_scale = random_walk_scale
   )),
 
-  # Define stan model
-  tar_target(model_file, "stan/model.stan"),
+  # Load model results
+  tar_target(draws_path, "data/forecast/draws.RDS", format = "file"),
+  tar_target(forecast_path, "data/forecast/forecast.RDS", format = "file"),
 
-  # Run stan model
-  # tar_target(stan_run, stan(
-  #   file = model_file,
-  #   data = stan_data,
-  #   chains = n_chains,
-  #   warmup = n_warmup,
-  #   iter = n_iter,
-  #   cores = n_cores,
-  #   refresh = n_refresh
-  # ), deployment = "main", memory = "persistent"),
-  tar_target(model, run_model(stan_data, model_file, n_chains, n_warmup,
-                              n_iter, n_cores, n_refresh)),
-  tar_target(draws_path, "_output/draws.rds", format = "auto"),
+  tar_target(draws, readRDS(draws_path), deployment = "main"),
+  tar_target(forecast, readRDS(forecast_path), deployment = "main"),
 
-  # Process stan results
-  # tar_target(draws, get_draws(stan_run), deployment = "main", memory = "persistent"),
+  # Get probabilities of winning
+  tar_target(p_dem, get_win_prob(forecast, "dem")),
+  tar_target(p_rep, get_win_prob(forecast, "rep")),
+  tar_target(p_draw, get_win_prob(forecast, "draw")),
+
+  # Draw ev distribution
+  tar_target(ev_distribution, plot_ev_distribution(draws)),
+  tar_target(ev_dist_table, table_ev_distribution(p_dem, p_rep, p_draw)),
+  tar_target(most_likely_ev, calc_most_likely_ev(draws)),
+
+  # Plot per state voting
+  tar_target(per_state_plot, plot_state_votes(election_performance)),
+  tar_target(per_state_map, plot_map_state_votes(election_performance)),
+  tar_target(wrong_states, election_performance %>% filter(!model_right) %>% pull(state_name)),
+
+  # Get actual election results
+  tar_target(election_results, get_election_results()),
+
+  # Calculate election performance from results and forecast
+  tar_target(election_performance, get_model_election_performance(forecast, election_results)),
+
+  # Get state predictions
+  tar_target(ok_pred, get_state_prediction(election_performance, "Oklahoma")),
+  tar_target(ok_err, get_state_prediction(election_performance, "Oklahoma", type = "error")),
 
   # Render synopsis
   tar_quarto(render, "synopsis/synopsis.qmd")
