@@ -2,7 +2,7 @@
 ## Further adapted by Aleksander Bang-Larsen
 ## Adaption on 'econ2024_DB_Harris.R' by Derek Beach, Nicholas Beach Johansen
 ## and Nicholas Haas to model 2024 data. This file was adapted from
-## 'final_2016.R' run Econ. model on the 2024 data
+## 'final_2016.R' run Econ.
 
 ###############################################################
 ## Setup for runtime
