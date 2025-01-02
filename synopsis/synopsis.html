@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Aleksander Bang-Larsen - 202107426">
+<meta name="author" content="Aleksander Bang-Larsen">
 
 <title>Forecasting the 2024 US Presidential Election</title>
 <style>
@@ -3189,7 +3189,7 @@ window.Quarto = {
 
 <div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
 <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="synopsis.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li><li><a href="synopsis.docx"><i class="bi bi-file-word"></i>MS Word</a></li></ul></div></div>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="synopsis.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></div>
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
@@ -3203,7 +3203,7 @@ window.Quarto = {
   <div class="quarto-title-meta-heading">Affiliation</div>
   
     <div class="quarto-title-meta-contents">
-    <p class="author">Aleksander Bang-Larsen - 202107426 </p>
+    <p class="author">Aleksander Bang-Larsen </p>
   </div>
   <div class="quarto-title-meta-contents">
         <p class="affiliation">
@@ -3254,8 +3254,8 @@ Table 1: Probability of each election outcome
 
     <script>
 
-      function styleCell_p2u9qdvt325td9fw5d58(i, j, css_id) {
-          var table = document.getElementById("tinytable_p2u9qdvt325td9fw5d58");
+      function styleCell_6a84ctki9qxudwb6sybb(i, j, css_id) {
+          var table = document.getElementById("tinytable_6a84ctki9qxudwb6sybb");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -3265,7 +3265,7 @@ Table 1: Probability of each election outcome
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_p2u9qdvt325td9fw5d58');
+        var table = document.getElementById('tinytable_6a84ctki9qxudwb6sybb');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -3273,8 +3273,8 @@ Table 1: Probability of each election outcome
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_p2u9qdvt325td9fw5d58(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_p2u9qdvt325td9fw5d58");
+      function spanCell_6a84ctki9qxudwb6sybb(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_6a84ctki9qxudwb6sybb");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -3304,16 +3304,16 @@ Table 1: Probability of each election outcome
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 0, j: 1 },  ], css_id: 'tinytable_css_o9j08pdi8i9dx9uyv9sq',}, 
-          { positions: [ { i: 1, j: 0 }, { i: 1, j: 1 }, { i: 1, j: 2 },  ], css_id: 'tinytable_css_gsjd3g3sttrlfnyzon10',}, 
-          { positions: [ { i: 0, j: 0 },  ], css_id: 'tinytable_css_3h6hha91j5jm5q9r81z1',}, 
-          { positions: [ { i: 0, j: 2 },  ], css_id: 'tinytable_css_2v6tkfu9dhuq02owlyg4',}, 
+          { positions: [ { i: 0, j: 2 },  ], css_id: 'tinytable_css_t86t8sb37y0zxlp1i7a6',}, 
+          { positions: [ { i: 0, j: 0 },  ], css_id: 'tinytable_css_ngi1nen5k5ycy2e7hatu',}, 
+          { positions: [ { i: 1, j: 0 }, { i: 1, j: 1 }, { i: 1, j: 2 },  ], css_id: 'tinytable_css_8sx84tjqltovdup4o1q8',}, 
+          { positions: [ { i: 0, j: 1 },  ], css_id: 'tinytable_css_77rt2kpy0x5j1tv73piy',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_p2u9qdvt325td9fw5d58(cell.i, cell.j, group.css_id);
+                  styleCell_6a84ctki9qxudwb6sybb(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -3321,13 +3321,13 @@ Table 1: Probability of each election outcome
 
     <style>
 
-.table td.tinytable_css_o9j08pdi8i9dx9uyv9sq, .table th.tinytable_css_o9j08pdi8i9dx9uyv9sq { color: white; background-color: #000000; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
-.table td.tinytable_css_gsjd3g3sttrlfnyzon10, .table th.tinytable_css_gsjd3g3sttrlfnyzon10 { border-bottom: solid #d3d8dc 0.1em; }
-.table td.tinytable_css_3h6hha91j5jm5q9r81z1, .table th.tinytable_css_3h6hha91j5jm5q9r81z1 { color: white; background-color: #3A4EB1; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
-.table td.tinytable_css_2v6tkfu9dhuq02owlyg4, .table th.tinytable_css_2v6tkfu9dhuq02owlyg4 { color: white; background-color: #E40A04; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_t86t8sb37y0zxlp1i7a6, .table th.tinytable_css_t86t8sb37y0zxlp1i7a6 { color: white; background-color: #E40A04; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_ngi1nen5k5ycy2e7hatu, .table th.tinytable_css_ngi1nen5k5ycy2e7hatu { color: white; background-color: #3A4EB1; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_8sx84tjqltovdup4o1q8, .table th.tinytable_css_8sx84tjqltovdup4o1q8 { border-bottom: solid #d3d8dc 0.1em; }
+.table td.tinytable_css_77rt2kpy0x5j1tv73piy, .table th.tinytable_css_77rt2kpy0x5j1tv73piy { color: white; background-color: #000000; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
 </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_p2u9qdvt325td9fw5d58" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_6a84ctki9qxudwb6sybb" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>

@@ -4,7 +4,7 @@ library(tarchetypes)
 # Set target options:
 tar_option_set(
   # Define controller for parrallel operation
-  # controller = crew::crew_controller_local(workers = 6),
+  controller = crew::crew_controller_local(workers = 6),
   # Define packages
   packages = c(
     "tidyverse", "rstan", "stringr", "lubridate", "gridExtra", "pbapply",

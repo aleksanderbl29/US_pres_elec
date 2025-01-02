@@ -17,12 +17,11 @@ format:
       - heightrounded
     linestretch: 1.5
     papersize: a4
-  docx: default
   html:
     theme: simplex
     embed-resources: true
 author:
-  - name: Aleksander Bang-Larsen - 202107426
+  - name: Aleksander Bang-Larsen
     affiliation: Aarhus University
 execute:
   echo: false
