@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<<<<<<< HEAD
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
@@ -3255,8 +3254,8 @@ Table 1: Probability of each election outcome
 
     <script>
 
-      function styleCell_6a84ctki9qxudwb6sybb(i, j, css_id) {
-          var table = document.getElementById("tinytable_6a84ctki9qxudwb6sybb");
+      function styleCell_hkvsil089bkmgc6vhw8k(i, j, css_id) {
+          var table = document.getElementById("tinytable_hkvsil089bkmgc6vhw8k");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -3266,7 +3265,7 @@ Table 1: Probability of each election outcome
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_6a84ctki9qxudwb6sybb');
+        var table = document.getElementById('tinytable_hkvsil089bkmgc6vhw8k');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -3274,8 +3273,8 @@ Table 1: Probability of each election outcome
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_6a84ctki9qxudwb6sybb(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_6a84ctki9qxudwb6sybb");
+      function spanCell_hkvsil089bkmgc6vhw8k(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_hkvsil089bkmgc6vhw8k");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -3305,16 +3304,16 @@ Table 1: Probability of each election outcome
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 0, j: 2 },  ], css_id: 'tinytable_css_t86t8sb37y0zxlp1i7a6',}, 
-          { positions: [ { i: 0, j: 0 },  ], css_id: 'tinytable_css_ngi1nen5k5ycy2e7hatu',}, 
-          { positions: [ { i: 1, j: 0 }, { i: 1, j: 1 }, { i: 1, j: 2 },  ], css_id: 'tinytable_css_8sx84tjqltovdup4o1q8',}, 
-          { positions: [ { i: 0, j: 1 },  ], css_id: 'tinytable_css_77rt2kpy0x5j1tv73piy',}, 
+          { positions: [ { i: 0, j: 2 },  ], css_id: 'tinytable_css_qhazsgdpa7oly6emdsb5',}, 
+          { positions: [ { i: 1, j: 0 }, { i: 1, j: 1 }, { i: 1, j: 2 },  ], css_id: 'tinytable_css_n5be036f9bnnwo0obh2e',}, 
+          { positions: [ { i: 0, j: 1 },  ], css_id: 'tinytable_css_bek9qmvxq49tti56ftd1',}, 
+          { positions: [ { i: 0, j: 0 },  ], css_id: 'tinytable_css_21vgmnvrl9ha5ccxqepf',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_6a84ctki9qxudwb6sybb(cell.i, cell.j, group.css_id);
+                  styleCell_hkvsil089bkmgc6vhw8k(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -3322,13 +3321,13 @@ Table 1: Probability of each election outcome
 
     <style>
 
-.table td.tinytable_css_t86t8sb37y0zxlp1i7a6, .table th.tinytable_css_t86t8sb37y0zxlp1i7a6 { color: white; background-color: #E40A04; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
-.table td.tinytable_css_ngi1nen5k5ycy2e7hatu, .table th.tinytable_css_ngi1nen5k5ycy2e7hatu { color: white; background-color: #3A4EB1; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
-.table td.tinytable_css_8sx84tjqltovdup4o1q8, .table th.tinytable_css_8sx84tjqltovdup4o1q8 { border-bottom: solid #d3d8dc 0.1em; }
-.table td.tinytable_css_77rt2kpy0x5j1tv73piy, .table th.tinytable_css_77rt2kpy0x5j1tv73piy { color: white; background-color: #000000; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_qhazsgdpa7oly6emdsb5, .table th.tinytable_css_qhazsgdpa7oly6emdsb5 { color: white; background-color: #E40A04; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_n5be036f9bnnwo0obh2e, .table th.tinytable_css_n5be036f9bnnwo0obh2e { border-bottom: solid #d3d8dc 0.1em; }
+.table td.tinytable_css_bek9qmvxq49tti56ftd1, .table th.tinytable_css_bek9qmvxq49tti56ftd1 { color: white; background-color: #000000; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_21vgmnvrl9ha5ccxqepf, .table th.tinytable_css_21vgmnvrl9ha5ccxqepf { color: white; background-color: #3A4EB1; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
 </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_6a84ctki9qxudwb6sybb" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_hkvsil089bkmgc6vhw8k" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -3833,32 +3832,3 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 
 
 </body></html>
-=======
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Work in Progress</title>
-  <style>
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #f0f0f0;
-    }
-    h1 {
-      color: #333;
-    }
-  </style>
-</head>
-<body>
-  <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: url('https://upload.wikimedia.org/wikipedia/en/a/a4/Flag_of_the_United_States.svg') no-repeat center center; background-size: cover; z-index: -1;"></div>
-  <div style="border: 2px solid black; padding: 20px; background-color: rgba(255, 255, 255, 0.8);">
-    <h1>Work in progress - Page will be online when exam is over</h1>
-  </div>
-</body>
-</html>
->>>>>>> 4ea337813da4014630b2f15fce28eb7797cd9f98

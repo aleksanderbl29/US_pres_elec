@@ -1,5 +1,5 @@
 name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
-.Random.seed|object|0100a81d1b993f42|||||||||||||||
+.Random.seed|object|f55ba5e9366cc605|||||||||||||||
 abramowitz_file|stem|eca14713479e9d55|469e0ba9ff74d6c5|2c530c1562a7fbd1|861806613|data/abramowitz_data_2024.csv|t19998.347837177s|d3a9a9bd901d9d3c|2197|file|local|vector|||0||
 add_state_names|function|352e27657095aa92|||||||||||||||
 adjusters|stem|c859fb99be0abe75|3890c7445ab31913|2c530c1562a7fbd1|531253930||t20081.6028429544s|1acc23da44a82060|239|rds|local|vector|||0||
@@ -149,7 +149,7 @@ religious_unaffiliated|stem|43abb9089f6dff54|a2b79dfd928a45c2|57418147e0446c00|-
 religious_unaffiliated_file|stem|16adca3ece9dfa38|3c2c5de094272c34|2c530c1562a7fbd1|98120470|data/ReligiousUnaffiliated_Abbrev.csv|t20017.2795515116s|5975598e4e5a6487|323|file|local|vector|||0||
 remove_congressional_districts|function|a5353affa1a5251f|||||||||||||||
 rename_variables|function|aff446f6cf215331|||||||||||||||
-render|stem|325736be9350f0b9|752ee237886c43a6|bb8547b46fd0c7d4|-1846994106|synopsis/synopsis.html*synopsis/synopsis.pdf*synopsis/synopsis.qmd|t20090.6457269789s|3d8ecd9351116c9d|2158926|file|local|vector|||37.959||
+render|stem|a43f9c0499bbe156|752ee237886c43a6|bb8547b46fd0c7d4|-1846994106|synopsis/synopsis.html*synopsis/synopsis.pdf*synopsis/synopsis.qmd|t20090.6610573458s|3d8ecd9351116c9d|2158926|file|local|vector|||38.386||
 run_date|stem|3b57a5f1687311be|555a0d78adb584bc|2c530c1562a7fbd1|-56825990||t20081.6036528731s|4179e472436f3418|81|rds|local|vector|||1.267||
 run_model|function|0c19d1ef30a6f84f|||||||||||||||
 S|stem|15ad6894e4c6c5be|5b1027355326d930|60f2b78a920e6b91|-1840563468||t20081.603717963s|d0ec9a5a63f98b43|53|rds|local|vector|||0||
