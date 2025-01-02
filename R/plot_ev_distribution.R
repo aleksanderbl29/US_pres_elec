@@ -1,8 +1,8 @@
-plot_ev_distribution <- function(data, p_dem, p_rep, p_draw) {
+plot_ev_distribution <- function(data) {
   data %>%
     filter(t == max(t)) %>%
     group_by(draw) %>%
-    summarise(dem_ev = sum(ev * (p_harris > 0.5))) |>
+    summarise(dem_ev = sum(ev * (p_harris > 0.5))) %>%
     mutate(winner = case_when(
       dem_ev >= 270 ~ "Democratic",
       dem_ev < 269 ~ "Republican",
@@ -11,14 +11,15 @@ plot_ev_distribution <- function(data, p_dem, p_rep, p_draw) {
     geom_vline(xintercept = 269.5) +
     geom_histogram(binwidth = 1) +
     theme_classic() +
-    # cowplot::theme_cowplot() +
     scale_fill_manual(
       values = c('Democratic' = '#3A4EB1',
                  'Republican' = '#E40A04',
                  "No winner" = "black")) +
-    labs(x = "Electoral college votes",
-         y = NULL,
-         fill = NULL) +
+    labs(
+      x = NULL, #x = "Electoral college votes",
+      y = NULL,
+      fill = NULL
+    ) +
     coord_cartesian(expand = FALSE) +
     theme(
       legend.position = "none",
@@ -26,6 +27,24 @@ plot_ev_distribution <- function(data, p_dem, p_rep, p_draw) {
       axis.title.x = element_text(),
       plot.caption = element_text(hjust = 0.5, face = "italic", size = 8)
     )
+}
+
+calc_most_likely_ev <- function(data) {
+  evs <- data %>%
+    filter(t == max(t)) %>%
+    group_by(draw) %>%
+    summarise(dem_ev = sum(ev * (p_harris > 0.5))) %>%
+    select(dem_ev) %>%
+    table() %>%
+    as_tibble() %>%
+    slice_max(n, n = 3) %>%
+    pull(dem_ev)
+
+  paste(
+    paste(evs[-length(evs)], collapse = ", "),
+    evs[length(evs)],
+    sep = " and "
+  )
 }
 
 table_ev_distribution <- function(p_dem, p_rep, p_draw) {

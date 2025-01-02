@@ -3,3 +3,6 @@ project:
   type: default
   # output-dir: _output
   execute-dir: project
+
+bibliography: references.bib
+fig-align: center

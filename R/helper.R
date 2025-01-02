@@ -88,7 +88,6 @@ first_targets <- c(
   "abramowitz_file",
   "consumer_sentiment_file",
   "issue_file",
-  "construction_file",
   "tfc_prediction",
   "mu_b_prior",
   "national_mu_prior",
@@ -127,6 +126,5 @@ first_targets <- c(
   "ss_cov_mu_b_walk",
   "ss_cov_mu_b_T",
   "ss_cov_poll_bias",
-  "stan_data",
-  "model_file"
+  "stan_data"
 )

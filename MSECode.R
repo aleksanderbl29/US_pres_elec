@@ -7,9 +7,8 @@ rm(list = ls())
 library(tidyverse)
 
 #Load data
-# out <- read_rds("_output/Model output.rds") #Load your output, this is just an example using 2020 predictions/results#
-tar_load(stan_run)
-predicted_score <- rstan::extract(stan_run, pars = "predicted_score")[[1]]
+out <- read_rds("_output/Model output.rds") #Load your output, this is just an example using 2020 predictions/results#
+predicted_score <- rstan::extract(out, pars = "predicted_score")[[1]]
 state_abb_list <- read.csv("data/potus_results_76_20.csv") %>%
   pull(state) %>% unique()
 
@@ -17,7 +16,7 @@ state_abb_list <- read.csv("data/potus_results_76_20.csv") %>%
 
 #Pull predicted score for each state for election day, take the mean of all simulations#
 prs <- predicted_score %>%
-  `[`(, 245, ) %>%
+  `[`(, 104, ) %>%
   apply(2, mean)
 
 #Create a dataframe with prediction (in percentage terms) for each state#
@@ -28,14 +27,14 @@ pred_state <- data.frame(
 
 #Pull the results for each state#
 result <- read_csv("data/2024a_results.csv") %>%
-  mutate(Biden = (Biden / (Biden + Trump)) * 100) %>%
-  select(state, Biden) %>%
+  mutate(harris = (harris / (harris + trump)) * 100) %>%
+  select(state, harris) %>%
   arrange(state)
 
 #Create a merged dataset with predicted and actual results, and their difference (error)#
 pred_state <- pred_state %>%
   left_join(result) %>%
-  mutate(error = pred - Biden,
+  mutate(error = pred - harris,
          label = factor(state))
 
 #Calculate mean squared error, round to three decimal places#
@@ -46,8 +45,8 @@ mse <- round(sum(pred_state$error^2) / nrow(pred_state), digits = 3)
 #order states by threshold, add error label next to predicted value, add title#
 ggplot(pred_state,
        aes(x = label,
-           y = Biden,
-           ymin = Biden,
+           y = harris,
+           ymin = harris,
            ymax = pred)) +
   geom_point(data = pred_state,
              aes(y = pred,
@@ -58,7 +57,7 @@ ggplot(pred_state,
   geom_linerange(alpha = .4,
                  size = 1.2,
                  color = ifelse(pred_state$error < 0, 'blue', 'red')) +
-  geom_point(aes(color = ifelse(Biden >= 50,
+  geom_point(aes(color = ifelse(harris >= 50,
                                 'Democratic',
                                 'Republican')),
              size = 2.2) +
@@ -69,7 +68,7 @@ ggplot(pred_state,
                                 'Republican' = '#E40A04')) +
   scale_x_discrete("",
                    limits = pred_state$label[order(pred_state$pred)]) +
-  scale_y_continuous("Biden vote share prediction/result") +
+  scale_y_continuous("harris vote share prediction/result") +
   geom_text(aes(y = pred,
                 label = round(error, digits = 2)),
             nudge_y = 4,
