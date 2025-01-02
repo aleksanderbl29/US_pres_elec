@@ -1,3 +1,7 @@
 *
 !*.qmd
 !.gitignore
+
+!*.html
+!*.pdf
+!format
