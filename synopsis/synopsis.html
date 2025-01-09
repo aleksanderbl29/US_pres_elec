@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.39">
+<meta name="generator" content="quarto-1.6.40">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -3230,8 +3230,8 @@ window.Quarto = {
 </section>
 <section id="model-architecture" class="level1">
 <h1>Model architecture</h1>
-<p>Our model uses a bayesian approach <span class="citation" data-cites="lock2010">(Lock and Gelman 2010)</span> to estimate the probability of winning for the Democratic candidate, which in this election was Vice President Harris. To do this, the model takes a prior belief of the candidate’s probability of winning along with some evidence of the election to calculate the posterior which is from where we get our estimate. For our model, the prior given is the value calculated using a modified version of the time for change model presented by <span class="citation" data-cites="abramowitz2008">Abramowitz (2008)</span>. The original time for change model is theoretically defined and uses candidate incumbency, june approval ratings and second-quarter GDP growth of the election year to calculate a preliminary <span class="math inline">\(p(Harris)\)</span>. This preliminary <span class="math inline">\(p(Harris)\)</span> is also the prior for our model. We gave the model a prior probability of Harris winning of 48.91. In our modified version we have exchanged the candidate incumbency in favor of consumer sentiment. We get the consumer sentiment data from <span class="citation" data-cites="fred_con_sen2024">University of Michigan (2024)</span>. We also added polling data on who the public deems to be the most capable at handling the issue that is most important to the respondent <span class="citation" data-cites="gallup2024">(Gallup 2024)</span>. Furthermore we added the national rate of new construction as a measurement of how much economic activity is 1) present and 2) visible to people. This data is from the Federal Reserve Bank of St. Louis and is calculated as the rate of change since last year as that is almost analogous to how the common man perceives new construction - as more or less than recent years.</p>
-<p>This preliminary prior is then held against estimated election outcomes based on polls. The polls are weighted such that the most recent polls have more influence on the final prediction, although all polls available will be used. The polls are collected by FiveThirtyEight as a part of their own election forecasting efforts.</p>
+<p>Our model uses a bayesian approach <span class="citation" data-cites="lock2010">(Lock and Gelman 2010)</span> to estimate the probability of winning for the Democratic candidate, which in this election was Vice President Harris. To do this, the model takes a prior belief of the candidate’s probability of winning along with some evidence of the election to calculate the posterior which is from where we get our estimate. For our model, the prior given is the value calculated using a modified version of the time for change model presented by <span class="citation" data-cites="abramowitz2008">Abramowitz (2008)</span>. The original time for change model is theoretically defined and uses candidate incumbency, june approval ratings and second-quarter GDP growth of the election year to calculate a vote share for the democratic candidate. This vote share is also the prior for our model. We gave the model a vote share of 48.91. In our modified version we have exchanged the candidate incumbency in favor of consumer sentiment. We get the consumer sentiment data from <span class="citation" data-cites="fred_con_sen2024">University of Michigan (2024)</span>. We also added polling data on who the public deems to be the most capable at handling the issue that is most important to the respondent <span class="citation" data-cites="gallup2024">(Gallup 2024)</span>. Furthermore we added the national rate of new construction as a measurement of how much economic activity is 1) present and 2) visible to people. This data is from the Federal Reserve Bank of St. Louis and is calculated as the rate of change since last year as that is almost analogous to how the common man perceives new construction - as more or less than recent years.</p>
+<p>This prior is then held against estimated election outcomes based on polls. The polls are weighted such that the most recent polls have more influence on the final prediction, although all polls available will be used. The polls are collected by FiveThirtyEight as a part of their own election forecasting efforts.</p>
 <section id="utilizing-state-similarities-to-get-the-most-out-of-polls" class="level2">
 <h2 class="anchored" data-anchor-id="utilizing-state-similarities-to-get-the-most-out-of-polls">Utilizing state similarities to get the most out of polls</h2>
 <p>To ensure that we have appropriate polls for all states we utilize a witihin-state correlation matrix to share polls between the states. This has the benefit of not requiring quite as many polls to reliably predict the election. Polls are after all somewhat of a scarce resource. This state correlation matrix consists of quite a few datapoints in our rendition. The basic model uses the percentage of white evangelicals, white working class, college educated, white percentage and the median age for the state. We have then added and filtered the percentage of black people in the state to <em>not</em> include the young black men aged 18-29 as they were more likely to be republican than other blacks in the 2020 election <span class="citation" data-cites="suggs2024">(Suggs 2024)</span>. We also added the percentage of hispanics not including cubans as they have shown to not be politically aligned within sync with the rest of the hispanic group <span class="citation" data-cites="krogstad2020">(Krogstad 2020)</span>.</p>
@@ -3254,8 +3254,8 @@ Table 1: Probability of each election outcome
 
     <script>
 
-      function styleCell_hkvsil089bkmgc6vhw8k(i, j, css_id) {
-          var table = document.getElementById("tinytable_hkvsil089bkmgc6vhw8k");
+      function styleCell_yiuz0kz717y4g1atg0ij(i, j, css_id) {
+          var table = document.getElementById("tinytable_yiuz0kz717y4g1atg0ij");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -3265,7 +3265,7 @@ Table 1: Probability of each election outcome
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_hkvsil089bkmgc6vhw8k');
+        var table = document.getElementById('tinytable_yiuz0kz717y4g1atg0ij');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -3273,8 +3273,8 @@ Table 1: Probability of each election outcome
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_hkvsil089bkmgc6vhw8k(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_hkvsil089bkmgc6vhw8k");
+      function spanCell_yiuz0kz717y4g1atg0ij(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_yiuz0kz717y4g1atg0ij");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -3304,16 +3304,16 @@ Table 1: Probability of each election outcome
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 0, j: 2 },  ], css_id: 'tinytable_css_qhazsgdpa7oly6emdsb5',}, 
-          { positions: [ { i: 1, j: 0 }, { i: 1, j: 1 }, { i: 1, j: 2 },  ], css_id: 'tinytable_css_n5be036f9bnnwo0obh2e',}, 
-          { positions: [ { i: 0, j: 1 },  ], css_id: 'tinytable_css_bek9qmvxq49tti56ftd1',}, 
-          { positions: [ { i: 0, j: 0 },  ], css_id: 'tinytable_css_21vgmnvrl9ha5ccxqepf',}, 
+          { positions: [ { i: 0, j: 0 },  ], css_id: 'tinytable_css_oafmatct956ozib5kwrt',}, 
+          { positions: [ { i: 0, j: 1 },  ], css_id: 'tinytable_css_nxoee2hhp8olgkly1a6v',}, 
+          { positions: [ { i: 1, j: 0 }, { i: 1, j: 1 }, { i: 1, j: 2 },  ], css_id: 'tinytable_css_niqsvdm0hbimntzwo571',}, 
+          { positions: [ { i: 0, j: 2 },  ], css_id: 'tinytable_css_asltbitnxoq21xvi2ng3',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_hkvsil089bkmgc6vhw8k(cell.i, cell.j, group.css_id);
+                  styleCell_yiuz0kz717y4g1atg0ij(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -3321,13 +3321,13 @@ Table 1: Probability of each election outcome
 
     <style>
 
-.table td.tinytable_css_qhazsgdpa7oly6emdsb5, .table th.tinytable_css_qhazsgdpa7oly6emdsb5 { color: white; background-color: #E40A04; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
-.table td.tinytable_css_n5be036f9bnnwo0obh2e, .table th.tinytable_css_n5be036f9bnnwo0obh2e { border-bottom: solid #d3d8dc 0.1em; }
-.table td.tinytable_css_bek9qmvxq49tti56ftd1, .table th.tinytable_css_bek9qmvxq49tti56ftd1 { color: white; background-color: #000000; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
-.table td.tinytable_css_21vgmnvrl9ha5ccxqepf, .table th.tinytable_css_21vgmnvrl9ha5ccxqepf { color: white; background-color: #3A4EB1; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_oafmatct956ozib5kwrt, .table th.tinytable_css_oafmatct956ozib5kwrt { color: white; background-color: #3A4EB1; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_nxoee2hhp8olgkly1a6v, .table th.tinytable_css_nxoee2hhp8olgkly1a6v { color: white; background-color: #000000; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_niqsvdm0hbimntzwo571, .table th.tinytable_css_niqsvdm0hbimntzwo571 { border-bottom: solid #d3d8dc 0.1em; }
+.table td.tinytable_css_asltbitnxoq21xvi2ng3, .table th.tinytable_css_asltbitnxoq21xvi2ng3 { color: white; background-color: #E40A04; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
 </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_hkvsil089bkmgc6vhw8k" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_yiuz0kz717y4g1atg0ij" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
